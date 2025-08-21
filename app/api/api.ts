@@ -38,5 +38,12 @@ export async function getJobPosts() {
   return response;
 }
 
-
+export async function login(data: { Email: string; Password: string }) {
+  const response = await fetch("http://localhost:5075/api/auth/login", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(data),
+  });
+  return response;
+}
 //diğer API fonksiyonları

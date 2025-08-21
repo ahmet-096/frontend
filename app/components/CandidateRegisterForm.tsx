@@ -159,7 +159,7 @@ const AdayKayitForm: React.FC = () => {
       </button>
       <div className="flex justify-between mt-6">
         <Link
-          href="/login"
+          href="/giris"
           className="text-blue-600 underline font-medium hover:text-blue-800 transition"
         >
           Giriş Yap

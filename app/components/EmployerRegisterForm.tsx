@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import { registerEmployer } from "../api/api"; // API fonksiyonunu içe aktar
 
 const EmployerRegisterForm: React.FC = () => {
@@ -159,7 +160,21 @@ const EmployerRegisterForm: React.FC = () => {
           className="bg-blue-600 text-white rounded px-6 py-3 font-semibold mt-4 hover:bg-blue-700 transition"
         >
           Kayıt Ol
-        </button>
+        </button>        
+      <div className="flex justify-between mt-6">
+          <a
+            href="/login"
+            className="text-blue-600 underline font-medium hover:text-blue-800 transition"
+          >
+            Giriş Yap
+          </a>
+          <Link
+            href="/"
+            className="text-blue-600 underline font-medium hover:text-blue-800 transition"
+          >
+            Anasayfa
+          </Link>
+        </div>
       </form>
     </div>
   );

@@ -3,30 +3,24 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 
-export function Header({ panelTipi: propPanelTipi }: { panelTipi?: "isveren" | "aday" }) {
+export function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [mobileDropdown, setMobileDropdown] = useState<string | null>(null);
-    const [panelTipi, setPanelTipi] = useState<"isveren" | "aday" | undefined>(propPanelTipi);
+    const [panelTipi, setPanelTipi] = useState<"isveren" | "aday" | undefined>(undefined);
+    const [showKaydolAltMenu, setShowKaydolAltMenu] = useState(false);
 
     useEffect(() => {
-        if (!propPanelTipi) {
-            const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-            const role = typeof window !== "undefined" ? localStorage.getItem("role") : null;
-            if (token && role === "isveren") setPanelTipi("isveren");
-            else if (token && role === "aday") setPanelTipi("aday");
-            else setPanelTipi(undefined);
-        }
-    }, [propPanelTipi]);
+        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+        const role = typeof window !== "undefined" ? localStorage.getItem("role") : null;
+        if (token && role === "isveren") setPanelTipi("isveren");
+        else if (token && role === "aday") setPanelTipi("aday");
+        else setPanelTipi(undefined);
+    }, []);
 
     useEffect(() => {
-        if (mobileMenuOpen) {
-            document.body.style.overflow = "hidden";
-        } else {
-            document.body.style.overflow = "unset";
-        }
+        document.body.style.overflow = mobileMenuOpen ? "hidden" : "unset";
     }, [mobileMenuOpen]);
 
-    // İşveren paneli için masaüstü menü
+    // Menü içerikleri
     const isverenDesktopMenu = (
         <>
             <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
@@ -37,6 +31,7 @@ export function Header({ panelTipi: propPanelTipi }: { panelTipi?: "isveren" | "
                 onClick={() => {
                     localStorage.removeItem("token");
                     localStorage.removeItem("role");
+                    setPanelTipi(undefined);
                     window.location.href = "/";
                 }}
                 className="bg-red-600 text-white rounded-full px-4 py-1 border border-red-500 hover:bg-red-700 transition"
@@ -46,27 +41,6 @@ export function Header({ panelTipi: propPanelTipi }: { panelTipi?: "isveren" | "
         </>
     );
 
-    // İşveren paneli için mobil menü
-    const isverenMobileMenu = (
-        <>
-            <Link href="/" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Anasayfa</Link>
-            <Link href="/is-ilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
-            <Link href="/is-veren-panel" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Panel</Link>
-            <Link href="/is-veren-profil" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Profil</Link>
-            <button
-                onClick={() => {
-                    localStorage.removeItem("token");
-                    localStorage.removeItem("role");
-                    window.location.href = "/";
-                }}
-                className="bg-red-600 text-white rounded px-4 py-2 border border-red-500 hover:bg-red-700 transition w-full"
-            >
-                Çıkış Yap
-            </button>
-        </>
-    );
-
-    // Aday paneli için masaüstü menü
     const adayDesktopMenu = (
         <>
             <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
@@ -77,6 +51,7 @@ export function Header({ panelTipi: propPanelTipi }: { panelTipi?: "isveren" | "
                 onClick={() => {
                     localStorage.removeItem("token");
                     localStorage.removeItem("role");
+                    setPanelTipi(undefined);
                     window.location.href = "/";
                 }}
                 className="bg-red-600 text-white rounded-full px-4 py-1 border border-red-500 hover:bg-red-700 transition"
@@ -86,7 +61,66 @@ export function Header({ panelTipi: propPanelTipi }: { panelTipi?: "isveren" | "
         </>
     );
 
-    // Aday paneli için mobil menü
+    const desktopMenuItems = (
+        <div className="relative flex items-center gap-4">
+            <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
+            <Link href="/is-ilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
+            <div className="relative">
+                <button
+                    className="rounded-full px-4 py-1 border border-blue-200 bg-blue-600 text-white hover:bg-blue-700 transition"
+                    onClick={() => setShowKaydolAltMenu((v) => !v)}
+                >
+                    Kaydol
+                </button>
+                {showKaydolAltMenu && (
+                    <div className="absolute left-0 mt-2 bg-white border rounded shadow-lg flex flex-col min-w-[120px] z-30">
+                        <Link
+                            href="/adaykayit"
+                            className="px-4 py-2 hover:bg-blue-50 hover:text-blue-900 transition"
+                            onClick={() => setShowKaydolAltMenu(false)}
+                        >
+                            Aday
+                        </Link>
+                        <Link
+                            href="/isverenkayit"
+                            className="px-4 py-2 hover:bg-green-50 hover:text-green-900 transition"
+                            onClick={() => setShowKaydolAltMenu(false)}
+                        >
+                            İşveren
+                        </Link>
+                    </div>
+                )}
+            </div>
+            <button
+                className="rounded-full px-4 py-1 border border-green-200 bg-green-600 text-white hover:bg-green-700 transition"
+                onClick={() => window.location.href = "/giris"}
+            >
+                Giriş Yap
+            </button>
+        </div>
+    );
+
+    // Mobil menüler
+    const isverenMobileMenu = (
+        <>
+            <Link href="/" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Anasayfa</Link>
+            <Link href="/is-ilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
+            <Link href="/is-veren-panel" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Panel</Link>
+            <Link href="/is-veren-profil" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Profil</Link>
+            <button
+                onClick={() => {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("role");
+                    setPanelTipi(undefined);
+                    window.location.href = "/";
+                }}
+                className="bg-red-600 text-white rounded px-4 py-2 border border-red-500 hover:bg-red-700 transition w-full"
+            >
+                Çıkış Yap
+            </button>
+        </>
+    );
+
     const adayMobileMenu = (
         <>
             <Link href="/" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Anasayfa</Link>
@@ -97,6 +131,7 @@ export function Header({ panelTipi: propPanelTipi }: { panelTipi?: "isveren" | "
                 onClick={() => {
                     localStorage.removeItem("token");
                     localStorage.removeItem("role");
+                    setPanelTipi(undefined);
                     window.location.href = "/";
                 }}
                 className="bg-red-600 text-white rounded px-4 py-2 border border-red-500 hover:bg-red-700 transition w-full"
@@ -106,31 +141,61 @@ export function Header({ panelTipi: propPanelTipi }: { panelTipi?: "isveren" | "
         </>
     );
 
-    // Varsayılan masaüstü menü (giriş yapmamışlar )
-    const desktopMenuItems = (
-        <>
-            <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
-            <Link href="/is-ilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
-            <Link href="/aday-giris" className="rounded-full px-4 py-1 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition">CV Oluştur</Link>
-            <Link href="/aday-giris" className="hover:text-blue-900 transition">Aday Girişi</Link>
-            <Link href="/isveren-giris" className="hover:text-blue-900 transition">İşveren Girişi</Link>
-        </>
-    );
-
-    // Varsayılan mobil menü
     const mobileMenuItems = (
-        <>
+        <div className="flex flex-col w-full">
             <Link href="/" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Anasayfa</Link>
             <Link href="/is-ilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
-            <Link href="/aday-giris" className="rounded px-4 py-2 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition w-full" onClick={() => setMobileMenuOpen(false)}>CV Oluştur</Link>
-            <Link href="/aday-giris" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Aday Girişi</Link>
-            <Link href="/isveren-giris" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İşveren Girişi</Link>
-        </>
+            <div className="relative w-full">
+                <button
+                    className="rounded px-4 py-2 border border-blue-200 bg-blue-600 text-white hover:bg-blue-700 transition w-full"
+                    onClick={() => setShowKaydolAltMenu((v) => !v)}
+                >
+                    Kaydol
+                </button>
+                {showKaydolAltMenu && (
+                    <div className="absolute left-0 mt-2 bg-white border rounded shadow-lg flex flex-col min-w-[120px] z-30 w-full">
+                        <Link
+                            href="/adaykayit"
+                            className="px-4 py-2 hover:bg-blue-50 hover:text-blue-900 transition"
+                            onClick={() => { setShowKaydolAltMenu(false); setMobileMenuOpen(false); }}
+                        >
+                            Aday
+                        </Link>
+                        <Link
+                            href="/isverenkayit"
+                            className="px-4 py-2 hover:bg-green-50 hover:text-green-900 transition"
+                            onClick={() => { setShowKaydolAltMenu(false); setMobileMenuOpen(false); }}
+                        >
+                            İşveren
+                        </Link>
+                    </div>
+                )}
+            </div>
+            <button
+                className="rounded px-4 py-2 border border-green-200 bg-green-600 text-white hover:bg-green-700 transition w-full"
+                onClick={() => { window.location.href = "/giris"; setMobileMenuOpen(false); }}
+            >
+                Giriş Yap
+            </button>
+        </div>
     );
+
+    // Alt menü açıkken tıklama ile kapatma
+    useEffect(() => {
+        if (!showKaydolAltMenu) return;
+        const handleClick = (e: MouseEvent) => {
+            const target = e.target as HTMLElement;
+            if (!target.closest('.kaydol-alt-menu')) {
+                setShowKaydolAltMenu(false);
+            }
+        };
+        document.addEventListener('mousedown', handleClick);
+        return () => document.removeEventListener('mousedown', handleClick);
+    }, [showKaydolAltMenu]);
 
     return (
         <header className="bg-background shadow-sm py-4 px-4 md:px-8 flex items-center justify-between relative">
-            <div className="">
+            <div>
                 <Link href="/">
                     <Image
                         src="/images/logo.png"
@@ -144,7 +209,6 @@ export function Header({ panelTipi: propPanelTipi }: { panelTipi?: "isveren" | "
                 className="md:hidden block text-blue-700"
                 onClick={() => {
                     setMobileMenuOpen(!mobileMenuOpen);
-                    setMobileDropdown(null);
                 }}
                 aria-label="Menüyü Aç/Kapat"
             >
@@ -159,7 +223,7 @@ export function Header({ panelTipi: propPanelTipi }: { panelTipi?: "isveren" | "
                     ? isverenDesktopMenu
                     : panelTipi === "aday"
                         ? adayDesktopMenu
-                        : desktopMenuItems}
+                        : <div className="kaydol-alt-menu">{desktopMenuItems}</div>}
             </nav>
             {mobileMenuOpen && (
                 <nav className="absolute top-full left-0 w-full bg-white shadow-lg flex flex-col items-start gap-2 px-4 py-2 z-20 md:hidden">
@@ -167,7 +231,7 @@ export function Header({ panelTipi: propPanelTipi }: { panelTipi?: "isveren" | "
                         ? isverenMobileMenu
                         : panelTipi === "aday"
                             ? adayMobileMenu
-                            : mobileMenuItems}
+                            : <div className="kaydol-alt-menu w-full">{mobileMenuItems}</div>}
                 </nav>
             )}
         </header>

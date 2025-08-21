@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Link from "next/link";
 import { registerCandidate } from "../api/api";
 
 const AdayKayitForm: React.FC = () => {
@@ -156,6 +157,20 @@ const AdayKayitForm: React.FC = () => {
       >
         Kayıt Ol
       </button>
+      <div className="flex justify-between mt-6">
+        <Link
+          href="/login"
+          className="text-blue-600 underline font-medium hover:text-blue-800 transition"
+        >
+          Giriş Yap
+        </Link>
+        <Link
+          href="/"
+          className="text-blue-600 underline font-medium hover:text-blue-800 transition"
+        >
+          Anasayfa
+        </Link>
+      </div>
     </form>
   );
 };

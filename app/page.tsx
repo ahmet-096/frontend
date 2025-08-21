@@ -1,8 +1,14 @@
-import Image from "next/image";
+'use client'
+import { Header } from "./components/header";
+import { Footer } from "./components/footer";
+import AdayKayitForm from "./components/CandidateRegisterForm";
 
 export default function Home() {
   return (
-    <div className="flex flex-colsadfasffsfadsfsf items-center justify-center min-h-screen bg-gray-100">
-    </div>
+    <>
+      <Header />
+      <AdayKayitForm />
+      <Footer />
+    </>
   );
 }

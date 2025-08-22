@@ -48,13 +48,15 @@ const LoginForm: React.FC = () => {
       const data = await res.json();
       setSuccess("Giriş başarılı!");
       localStorage.setItem("access_token", data.access_token);
+      localStorage.setItem("role", data.role === "Employer" ? "isveren" : data.role === "Candidate" ? "aday" : data.role); // <-- EKLENDİ
+
 
       // Rol bilgisine göre yönlendirme
       // Backend login cevabında "role" alanı olmalı: Candidate, Employer, Admin
       if (data.role === "Candidate") {
         router.push("/adaysayfa");
       } else if (data.role === "Employer") {
-        router.push("/isverensayfa");
+        router.push("/");
       } else if (data.role === "Admin") {
         router.push("/yoneticipanel");
       } else {

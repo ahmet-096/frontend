@@ -8,12 +8,18 @@ export function Header() {
     const [panelTipi, setPanelTipi] = useState<"isveren" | "aday" | undefined>(undefined);
     const [showKaydolAltMenu, setShowKaydolAltMenu] = useState(false);
 
+    // localStorage değiştiğinde menüyü güncelle
     useEffect(() => {
-        const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-        const role = typeof window !== "undefined" ? localStorage.getItem("role") : null;
-        if (token && role === "isveren") setPanelTipi("isveren");
-        else if (token && role === "aday") setPanelTipi("aday");
-        else setPanelTipi(undefined);
+        const checkRole = () => {
+            const token = typeof window !== "undefined" ? localStorage.getItem("token") || localStorage.getItem("access_token") : null;
+            const role = typeof window !== "undefined" ? localStorage.getItem("role") : null;
+            if (token && role === "isveren") setPanelTipi("isveren");
+            else if (token && role === "aday") setPanelTipi("aday");
+            else setPanelTipi(undefined);
+        };
+        checkRole();
+        window.addEventListener("storage", checkRole);
+        return () => window.removeEventListener("storage", checkRole);
     }, []);
 
     useEffect(() => {
@@ -32,6 +38,7 @@ export function Header() {
             <button
                 onClick={() => {
                     localStorage.removeItem("token");
+                    localStorage.removeItem("access_token");
                     localStorage.removeItem("role");
                     setPanelTipi(undefined);
                     window.location.href = "/";
@@ -53,6 +60,7 @@ export function Header() {
             <button
                 onClick={() => {
                     localStorage.removeItem("token");
+                    localStorage.removeItem("access_token");
                     localStorage.removeItem("role");
                     setPanelTipi(undefined);
                     window.location.href = "/";
@@ -117,6 +125,7 @@ export function Header() {
             <button
                 onClick={() => {
                     localStorage.removeItem("token");
+                    localStorage.removeItem("access_token");
                     localStorage.removeItem("role");
                     setPanelTipi(undefined);
                     window.location.href = "/";
@@ -138,6 +147,7 @@ export function Header() {
             <button
                 onClick={() => {
                     localStorage.removeItem("token");
+                    localStorage.removeItem("access_token");
                     localStorage.removeItem("role");
                     setPanelTipi(undefined);
                     window.location.href = "/";

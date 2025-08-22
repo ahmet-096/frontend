@@ -31,10 +31,9 @@ export function Header() {
         <>
             <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
             <Link href="/is-ilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
-            <Link href="/cv-olustur" className="rounded-full px-4 py-1 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition">CV Oluştur</Link>
-            <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
-            <Link href="/is-veren-panel" className="hover:text-blue-900 transition">Panel</Link>
+            <Link href="/isverensayfa" className="hover:text-blue-900 transition">Panel</Link>
             <Link href="/is-veren-profil" className="hover:text-blue-900 transition">Profil</Link>
+            <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
             <button
                 onClick={() => {
                     localStorage.removeItem("token");
@@ -118,10 +117,10 @@ export function Header() {
         <>
             <Link href="/" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Anasayfa</Link>
             <Link href="/is-ilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
-            <Link href="/cv-olustur" className="rounded px-4 py-2 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition w-full" onClick={() => setMobileMenuOpen(false)}>CV Oluştur</Link>
-            <Link href="/iletisim" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İletişim</Link>
-            <Link href="/is-veren-panel" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Panel</Link>
-            <Link href="/is-veren-profil" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Profil</Link>
+            <Link href="/isverensayfa" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Panel</Link>
+            <Link href="/isverenprofil" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Profil</Link>
+           <Link href="/iletisim" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İletişim</Link>
+
             <button
                 onClick={() => {
                     localStorage.removeItem("token");
@@ -233,9 +232,9 @@ export function Header() {
                 aria-label="Menüyü Aç/Kapat"
             >
                 <svg width="32" height="32" fill="currentColor" viewBox="0 0 32 32">
-                    <rect y="7" width="32" height="4" rx="2"/>
-                    <rect y="15" width="32" height="4" rx="2"/>
-                    <rect y="23" width="32" height="4" rx="2"/>
+                    <rect y="7" width="32" height="4" rx="2" />
+                    <rect y="15" width="32" height="4" rx="2" />
+                    <rect y="23" width="32" height="4" rx="2" />
                 </svg>
             </button>
             <nav className="hidden md:flex items-center gap-4 text-blue-700 relative font-medium">

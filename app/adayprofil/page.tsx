@@ -7,7 +7,10 @@ export const adayprofil = () => {
   return (
     <>
       <Header />
-      <CandidateProfile />
+      <main className='mb-16'>
+        <CandidateProfile />
+      </main>
+      
       <Footer />
     </>
   )

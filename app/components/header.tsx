@@ -55,7 +55,7 @@ export function Header() {
             <Link href="/isilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
             <Link href="/cvolustur" className="rounded-full px-4 py-1 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition">CV Oluştur</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
-            <Link href="/profil" className="hover:text-blue-900 transition">Profil</Link>
+            <Link href="/adayprofil" className="hover:text-blue-900 transition">Profil</Link>
             <button
                 onClick={() => {
                     localStorage.removeItem("token");
@@ -142,7 +142,7 @@ export function Header() {
             <Link href="/isilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
             <Link href="/cvolustur" className="rounded px-4 py-2 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition w-full" onClick={() => setMobileMenuOpen(false)}>CV Oluştur</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İletişim</Link>
-            <Link href="/profil" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Profil</Link>
+            <Link href="/adayprofil" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Profil</Link>
             <button
                 onClick={() => {
                     localStorage.removeItem("token");

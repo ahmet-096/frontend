@@ -1,15 +1,15 @@
 import React from 'react'
 import Header from '../components/header'
 import Footer from '../components/footer'
-import EmployerPage from '../components/EmployerPage'
+import CandidatePage from '../components/CandidatePage'
 
-export const page = () => {
+export const Page = () => {
   return (
     <>
       <Header />
-      <EmployerPage />
+      <CandidatePage />
       <Footer />
     </>
   )
 }
-export default page
+export default Page;

@@ -1,15 +1,15 @@
 import React from 'react'
 import Header from '../components/header'
 import Footer from '../components/footer'
-import EmployerPage from '../components/EmployerPage'
+import CandidateProfile from '../components/CandidateProfile'
 
-export const page = () => {
+export const adayprofil = () => {
   return (
     <>
       <Header />
-      <EmployerPage />
+      <CandidateProfile />
       <Footer />
     </>
   )
 }
-export default page
+export default adayprofil

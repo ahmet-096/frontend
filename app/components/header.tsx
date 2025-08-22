@@ -30,7 +30,7 @@ export function Header() {
     const isverenDesktopMenu = (
         <>
             <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
-            <Link href="/is-ilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
+            <Link href="/isilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
             <Link href="/isverensayfa" className="hover:text-blue-900 transition">Panel</Link>
             <Link href="/is-veren-profil" className="hover:text-blue-900 transition">Profil</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
@@ -52,8 +52,8 @@ export function Header() {
     const adayDesktopMenu = (
         <>
             <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
-            <Link href="/is-ilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
-            <Link href="/cv-olustur" className="rounded-full px-4 py-1 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition">CV Oluştur</Link>
+            <Link href="/isilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
+            <Link href="/cvolustur" className="rounded-full px-4 py-1 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition">CV Oluştur</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
             <Link href="/profil" className="hover:text-blue-900 transition">Profil</Link>
             <button
@@ -74,8 +74,8 @@ export function Header() {
     const desktopMenuItems = (
         <div className="relative flex items-center gap-4">
             <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
-            <Link href="/is-ilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
-            <Link href="/cv-olustur" className="rounded-full px-4 py-1 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition">CV Oluştur</Link>
+            <Link href="/isilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
+            <Link href="/giris" className="rounded-full px-4 py-1 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition">CV Oluştur</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
             <div className="relative">
                 <button
@@ -116,7 +116,7 @@ export function Header() {
     const isverenMobileMenu = (
         <>
             <Link href="/" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Anasayfa</Link>
-            <Link href="/is-ilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
+            <Link href="/isilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
             <Link href="/isverensayfa" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Panel</Link>
             <Link href="/isverenprofil" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Profil</Link>
            <Link href="/iletisim" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İletişim</Link>
@@ -139,8 +139,8 @@ export function Header() {
     const adayMobileMenu = (
         <>
             <Link href="/" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Anasayfa</Link>
-            <Link href="/is-ilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
-            <Link href="/cv-olustur" className="rounded px-4 py-2 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition w-full" onClick={() => setMobileMenuOpen(false)}>CV Oluştur</Link>
+            <Link href="/isilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
+            <Link href="/cvolustur" className="rounded px-4 py-2 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition w-full" onClick={() => setMobileMenuOpen(false)}>CV Oluştur</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İletişim</Link>
             <Link href="/profil" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Profil</Link>
             <button
@@ -161,8 +161,8 @@ export function Header() {
     const mobileMenuItems = (
         <div className="flex flex-col w-full">
             <Link href="/" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Anasayfa</Link>
-            <Link href="/is-ilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
-            <Link href="/cv-olustur" className="rounded px-4 py-2 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition w-full" onClick={() => setMobileMenuOpen(false)}>CV Oluştur</Link>
+            <Link href="/isilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
+            <Link href="/giris" className="rounded px-4 py-2 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition w-full" onClick={() => setMobileMenuOpen(false)}>CV Oluştur</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İletişim</Link>
             <div className="relative w-full">
                 <button
@@ -256,3 +256,4 @@ export function Header() {
         </header>
     );
 }
+export default Header;

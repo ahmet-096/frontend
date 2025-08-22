@@ -1,0 +1,23 @@
+.a4-cv {
+  margin: 24px auto;
+}
+
+@media print {
+  body, html {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #fff !important;
+  }
+  .a4-cv {
+    box-shadow: none !important;
+    margin: 0 !important;
+    width: 210mm !important;
+    min-height: 297mm !important;
+    height: 297mm !important;
+    background: #fff !important;
+    page-break-after: always;
+  }
+  #__next, #root {
+    background: #fff !important;
+  }
+}

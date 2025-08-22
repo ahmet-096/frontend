@@ -38,11 +38,42 @@ export async function getJobPosts() {
   return response;
 }
 
+// Giriş yapma API fonksiyonu
 export async function login(data: { Email: string; Password: string }) {
   const response = await fetch("http://localhost:5075/api/auth/login", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
+  });
+  return response;
+}
+
+// İşverenin kendi ilanlarını çek
+export async function getEmployerJobs(token: string) {
+  const response = await fetch("http://localhost:5075/api/jobposts/employer", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response;
+}
+
+// Yeni ilan ekle
+export async function addEmployerJob(token: string, ilan: unknown) {
+  const response = await fetch("http://localhost:5075/api/jobposts", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`
+    },
+    body: JSON.stringify(ilan),
+  });
+  return response;
+}
+
+// İlan sil
+export async function deleteEmployerJob(token: string, id: string) {
+  const response = await fetch(`http://localhost:5075/api/jobposts/${id}`, {
+    method: "DELETE",
+    headers: { Authorization: `Bearer ${token}` }
   });
   return response;
 }

@@ -8,7 +8,7 @@ export const Footer = () => {
         <nav className="flex flex-col md:flex-row items-center gap-3 md:gap-8 text-blue-700 font-medium mb-4">
           <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
           <Link href="/isilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
-          <Link href="/adaygiris" className="hover:text-blue-900 transition">CV Oluştur</Link>
+          <Link href="/giris" className="hover:text-blue-900 transition">CV Oluştur</Link>
           <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
         </nav>
         <div className="text-xs text-blue-500 text-center leading-tight">

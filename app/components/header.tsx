@@ -32,7 +32,7 @@ export function Header() {
             <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
             <Link href="/isilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
             <Link href="/isverensayfa" className="hover:text-blue-900 transition">Panel</Link>
-            <Link href="/is-veren-profil" className="hover:text-blue-900 transition">Profil</Link>
+            <Link href="/isverenprofil" className="hover:text-blue-900 transition">Profil</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
             <button
                 onClick={() => {
@@ -56,6 +56,7 @@ export function Header() {
             <Link href="/cvolustur" className="rounded-full px-4 py-1 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition">CV Oluştur</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
             <Link href="/adayprofil" className="hover:text-blue-900 transition">Profil</Link>
+            <Link href="/adaysayfa" className="hover:text-blue-900 transition">Başvurularım</Link>
             <button
                 onClick={() => {
                     localStorage.removeItem("token");
@@ -143,6 +144,7 @@ export function Header() {
             <Link href="/cvolustur" className="rounded px-4 py-2 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition w-full" onClick={() => setMobileMenuOpen(false)}>CV Oluştur</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İletişim</Link>
             <Link href="/adayprofil" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Profil</Link>
+            <Link href="/adaysayfa" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Başvurularım</Link>
             <button
                 onClick={() => {
                     localStorage.removeItem("token");

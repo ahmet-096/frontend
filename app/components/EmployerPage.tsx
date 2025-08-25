@@ -2,20 +2,21 @@
 import React, { useState, useEffect, useRef } from "react";
 import { getEmployerJobs, addEmployerJob, deleteEmployerJob } from "../api/api";
 import beylikduzuMahalleleri from "./Words";
+import { getCurrentUser } from "../api/api";
 
 type Ilan = {
-    _id?: string;
-    Title: string;
-    Description: string;
-    JobType: string;
-    Location: string;
+    id?: string;
+    title: string;
+    description: string;
+    jobType: string;
+    location: string;
 };
 
 const jobTypes = ["FullTime", "PartTime", "Internship", "Remote"];
 
 function EmployerPage() {
     const [ilanlar, setIlanlar] = useState<Ilan[]>([]);
-    const [form, setForm] = useState<Ilan>({ Title: "", Description: "", JobType: "FullTime", Location: "" });
+    const [form, setForm] = useState<Ilan>({ title: "", description: "", jobType: "FullTime", location: "" });
     const [showMahalle, setShowMahalle] = useState(false);
     const mahalleRef = useRef<HTMLInputElement>(null);
 
@@ -49,38 +50,49 @@ function EmployerPage() {
 
     const ilanEkle = async (e: React.FormEvent) => {
         e.preventDefault();
-        const { Title, Description, JobType, Location } = form;
-        if (!Title || !Description || !JobType || !Location) return;
+        const { title, description, jobType, location } = form;
+        if (!title || !description || !jobType || !location) return;
         const token = localStorage.getItem("token");
         if (!token) return (window.location.href = "/isverensayfa");
         const jobTypeMap = { FullTime: 0, PartTime: 1, Internship: 2, Remote: 3 };
+
+        // Kullanıcı bilgilerini çek
+        const userRes = await getCurrentUser(token);
+        if (!userRes.ok) {
+            alert("Kullanıcı bilgileri alınamadı.");
+            return;
+        }
+        const user = await userRes.json();
+        const employerId = user.employerId; // PK olan id
+
+        // İlan ekle
         const res = await addEmployerJob(token, {
-            title: Title,
-            description: Description,
-            jobType: jobTypeMap[JobType as keyof typeof jobTypeMap],
-            location: Location
+            EmployerId: employerId,
+            title: title,
+            description: description,
+            jobType: jobTypeMap[jobType as keyof typeof jobTypeMap],
+            location: location
         });
         if (!res.ok) {
             const errorText = await res.text();
-            console.error("API Error:", errorText);
-            alert("İlan eklenemedi: " + errorText);
+            if (errorText.includes("Employer not found")) {
+                alert("İlan ekleyebilmek için önce işveren olarak onaylanmanız gerekmektedir.");
+            }
             return;
         }
-        // Başarıyla eklenirse ilanları güncelle
-        setForm({ Title: "", Description: "", JobType: "FullTime", Location: "" });
+        setForm({ title: "", description: "", jobType: "FullTime", location: "" });
         getEmployerJobs(token)
             .then(res => res.json())
             .then(data => {
                 if (Array.isArray(data)) setIlanlar(data);
             });
     };
-
     const ilanSil = async (id?: string) => {
         if (!id) return;
         const token = localStorage.getItem("token");
         if (!token) return;
         const res = await deleteEmployerJob(token, id);
-        if (res.ok) setIlanlar(prev => prev.filter(ilan => ilan._id !== id));
+        if (res.ok) setIlanlar(prev => prev.filter(ilan => ilan.id !== id));
     };
 
     return (
@@ -92,26 +104,26 @@ function EmployerPage() {
                         <form onSubmit={ilanEkle} className="flex flex-col gap-4">
                             <input
                                 type="text"
-                                name="Title"
+                                name="title"
                                 placeholder="Başlık *"
-                                value={form.Title}
+                                value={form.title}
                                 onChange={handleChange}
                                 className="bg-blue-50 rounded px-4 py-2 font-semibold border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
                                 required
                                 autoComplete="off"
                             />
                             <textarea
-                                name="Description"
+                                name="description"
                                 placeholder="Açıklama *"
-                                value={form.Description}
+                                value={form.description}
                                 onChange={handleChange}
                                 className="bg-blue-50 rounded px-4 py-2 font-semibold border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none"
                                 required
                                 rows={3}
                             />
                             <select
-                                name="JobType"
-                                value={form.JobType}
+                                name="jobType"
+                                value={form.jobType}
                                 onChange={handleChange}
                                 className="bg-blue-50 rounded px-4 py-2 font-semibold border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
                                 required
@@ -121,9 +133,9 @@ function EmployerPage() {
                             <div className="relative">
                                 <input
                                     type="text"
-                                    name="Location"
+                                    name="location"
                                     placeholder="Mahalle *"
-                                    value={form.Location}
+                                    value={form.location}
                                     onChange={handleChange}
                                     className="bg-blue-50 rounded px-4 py-2 font-semibold border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
                                     required
@@ -135,7 +147,7 @@ function EmployerPage() {
                                 {showMahalle && (
                                     <ul className="absolute left-0 top-full mt-1 w-full bg-white border border-gray-200 rounded shadow z-10 max-h-60 overflow-auto">
                                         {beylikduzuMahalleleri
-                                            .filter(m => m.toLowerCase().includes(form.Location.toLowerCase()))
+                                            .filter(m => m.toLowerCase().includes(form.location.toLowerCase()))
                                             .map(m => (
                                                 <li key={m} className="px-4 py-2 cursor-pointer hover:bg-blue-50" onMouseDown={() => handleMahalleSec(m)}>
                                                     {m}
@@ -168,17 +180,17 @@ function EmployerPage() {
                             </thead>
                             <tbody>
                                 {ilanlar.length === 0 ? (
-                                    <tr>
+                                    <tr key="no-ilan">
                                         <td colSpan={5} className="text-gray-400 text-center py-8">Henüz ilanınız yok.</td>
                                     </tr>
                                 ) : ilanlar.map(ilan => (
-                                    <tr key={ilan._id} className="border-t">
-                                        <td className="px-4 py-2">{ilan.Title}</td>
-                                        <td className="px-4 py-2">{ilan.Description}</td>
-                                        <td className="px-4 py-2">{ilan.JobType}</td>
-                                        <td className="px-4 py-2">{ilan.Location}</td>
+                                    <tr key={ilan.id} className="border-t">
+                                        <td className="px-4 py-2">{ilan.title}</td>
+                                        <td className="px-4 py-2">{ilan.description}</td>
+                                        <td className="px-4 py-2">{ilan.jobType}</td>
+                                        <td className="px-4 py-2">{ilan.location}</td>
                                         <td className="px-4 py-2">
-                                            <button className="bg-red-600 text-white px-4 py-2 rounded font-bold" onClick={() => ilanSil(ilan._id)}>Sil</button>
+                                            <button className="bg-red-600 text-white px-4 py-2 rounded font-bold" onClick={() => ilanSil(ilan.id)}>Sil</button>
                                         </td>
                                     </tr>
                                 ))}
@@ -191,3 +203,4 @@ function EmployerPage() {
     );
 }
 export default EmployerPage;
+

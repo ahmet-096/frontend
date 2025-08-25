@@ -50,7 +50,7 @@ export async function login(data: { Email: string; Password: string }) {
 
 // İşverenin kendi ilanlarını çek
 export async function getEmployerJobs(token: string) {
-  const response = await fetch("http://localhost:5075/api/jobposts/employer", {
+  const response = await fetch("http://localhost:5075/api/jobposts", {
     headers: { Authorization: `Bearer ${token}` }
   });
   return response;
@@ -77,4 +77,11 @@ export async function deleteEmployerJob(token: string, id: string) {
   });
   return response;
 }
+export async function getCurrentUser(token: string) {
+  const response = await fetch("http://localhost:5075/api/auth/me", {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response;
+}
+
 //diğer API fonksiyonları

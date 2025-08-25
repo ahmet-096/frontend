@@ -2,38 +2,60 @@
 import React, { useState, useEffect, useRef } from "react";
 
 import beylikduzuMahalleleri, { bilgisayarProgramlari, populerPozisyonlar, yabanciDiller } from "./Words";
-import { getJobPosts } from "../api/api";
+import {getJobPosts } from "../api/api";
 
 
 
 // İlan tipi tanımı
 interface Ilan {
-  _id?: string;
-  baslik: string;
-  sirket?: string;
-  sehir?: string;
-  mahalle?: string;
-  yabanci_dil?: string;
-  bilgisayar_programi?: string;
-  tarih?: string;
-  maas?: string;
+  id?: string;
+  title: string;
+  companyName?: string;
+  city?: string;
+  location?: string;
+  language?: string;
+  software?: string;
+  createdAt?: string;
+  salary?: string;
 }
+
 
 export default function IsIlanlari() {
   const [ilanlar, setIlanlar] = useState<Ilan[]>([]);
   const [loading, setLoading] = useState(true);
 
 useEffect(() => {
-  getJobPosts()
-    .then(data => {
-      setIlanlar(Array.isArray(data) ? data : []);
-      setLoading(false);
-    })
-    .catch(() => {
-      setIlanlar([]);
-      setLoading(false);
-    });
+    const token = localStorage.getItem("token");
+    if (!token) {
+        window.location.href = "/giris";
+        setLoading(false);
+        return;
+    }
+    getJobPosts()
+        .then(res => res.json())
+        .then(data => {
+            // Gelen veri
+            const mapped = Array.isArray(data)
+                ? data.map((item: Ilan) => ({
+                    id: item.id,
+                    title: item.title,
+                    companyName: item.companyName,
+                    city: item.city,
+                    location: item.location,
+                    language: item.language,
+                    software: item.software,
+                    createdAt: item.createdAt,
+                    salary: item.salary,
+                }))
+                : [];
+            setIlanlar(mapped);
+            setLoading(false);
+        })
+        .catch(() => {
+            setLoading(false);
+        });
 }, []);
+
 
   const [filtre, setFiltre] = useState({
     pozisyon: "",
@@ -102,16 +124,16 @@ useEffect(() => {
   // Filtreleme
   const filtreliIlanlar = ilanlar.filter((ilan) => {
     return (
-      (filtre.pozisyon === "" ||
-        ilan.baslik.toLowerCase().includes(filtre.pozisyon.toLowerCase())) &&
+     (filtre.pozisyon === "" ||
+        ilan.title?.toLowerCase().includes(filtre.pozisyon.toLowerCase())) &&
       (filtre.firma === "" ||
-        (ilan.sirket || "").toLowerCase().includes(filtre.firma.toLowerCase())) &&
+        (ilan.companyName || "").toLowerCase().includes(filtre.firma.toLowerCase())) &&
       (filtre.mahalle === "" ||
-        (ilan.mahalle || "").toLowerCase().includes(filtre.mahalle.toLowerCase())) &&
+        (ilan.location || "").toLowerCase().includes(filtre.mahalle.toLowerCase())) &&
       (filtre.yabanci_dil === "" ||
-        (ilan.yabanci_dil || "").toLowerCase().includes(filtre.yabanci_dil.toLowerCase())) &&
+        (ilan.language || "").toLowerCase().includes(filtre.yabanci_dil.toLowerCase())) &&
       (filtre.bilgisayar_programı === "" ||
-        (ilan.bilgisayar_programi || "").toLowerCase().includes(filtre.bilgisayar_programı.toLowerCase()))
+        (ilan.software || "").toLowerCase().includes(filtre.bilgisayar_programı.toLowerCase()))
     );
   });
 
@@ -283,35 +305,35 @@ useEffect(() => {
             {loading ? (
               <div>Yükleniyor...</div>
             ) : (
-              ilanlarToShow.map((ilan, i) => (
-                <div
-                  key={ilan._id || i}
-                  className="bg-white rounded-xl shadow border border-gray-100 p-6 flex flex-col md:flex-row md:items-center justify-between"
-                >
-                  <div>
-                    <h2 className="text-lg font-semibold text-gray-800">{ilan.baslik}</h2>
-                    <div className="text-gray-600 mt-2">
-                      <span className="mr-4 font-medium">{ilan.sirket}</span>
-                      <span>
-                        {ilan.sehir} {ilan.mahalle && `/ ${ilan.mahalle}`}
-                      </span>
-                    </div>
-                    <div className="text-gray-400 mt-2 text-sm">
-                      İlan Tarihi: {ilan.tarih}
-                    </div>
-                    {ilan.maas && (
-                      <div className="text-gray-400 mt-2 text-sm">
-                        Maaş: {ilan.maas}
-                      </div>
-                    )}
-                  </div>
-                  <button
-                    className="bg-green-700 text-white rounded-lg py-2 px-6 font-bold mt-4 md:mt-0 hover:bg-green-800 transition"
-                  >
-                    İşe Başvur
-                  </button>
-                </div>
-              ))
+             ilanlarToShow.map((ilan, i) => (
+    <div
+      key={ilan.id || i}
+      className="bg-white rounded-xl shadow border border-gray-100 p-6 flex flex-col md:flex-row md:items-center justify-between"
+    >
+      <div>
+        <h2 className="text-lg font-semibold text-gray-800">{ilan.title}</h2>
+        <div className="text-gray-600 mt-2">
+          <span className="mr-4 font-medium">{ilan.companyName}</span>
+          <span>
+            {ilan.city} {ilan.location && `/ ${ilan.location}`}
+          </span>
+        </div>
+        <div className="text-gray-400 mt-2 text-sm">
+          İlan Tarihi: {ilan.createdAt}
+        </div>
+        {ilan.salary && (
+          <div className="text-gray-400 mt-2 text-sm">
+            Maaş: {ilan.salary}
+          </div>
+        )}
+      </div>
+      <button
+        className="bg-green-700 text-white rounded-lg py-2 px-6 font-bold mt-4 md:mt-0 hover:bg-green-800 transition"
+      >
+        İşe Başvur
+      </button>
+    </div>
+))
             )}
           </div>
           {/* Sayfalama */}

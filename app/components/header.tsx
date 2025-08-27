@@ -53,7 +53,7 @@ export function Header() {
         <>
             <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
             <Link href="/isilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
-            <Link href="/cvolustur" className="rounded-full px-4 py-1 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition">CV Oluştur</Link>
+            <Link href="/cvolustur" className="hover:text-blue-900 transition">Özgeçmiş Oluştur</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
             <Link href="/adayprofil" className="hover:text-blue-900 transition">Profil</Link>
             <Link href="/adaysayfa" className="hover:text-blue-900 transition">Başvurularım</Link>
@@ -65,7 +65,7 @@ export function Header() {
                     setPanelTipi(undefined);
                     window.location.href = "/";
                 }}
-                className="bg-red-600 text-white rounded-full px-4 py-1 border border-red-500 hover:bg-red-700 transition"
+                className="bg-red-600 text-white rounded-full px-4 py-1 border border-red-500 hover:bg-red-700 transition cursor-pointer"
             >
                 Çıkış Yap
             </button>
@@ -130,7 +130,7 @@ export function Header() {
                     setPanelTipi(undefined);
                     window.location.href = "/";
                 }}
-                className="bg-red-600 text-white rounded px-4 py-2 border border-red-500 hover:bg-red-700 transition w-full"
+                className="bg-red-600 text-white rounded px-4 py-2 border border-red-500 hover:bg-red-700 transition w-full cursor-pointer"
             >
                 Çıkış Yap
             </button>
@@ -153,7 +153,7 @@ export function Header() {
                     setPanelTipi(undefined);
                     window.location.href = "/";
                 }}
-                className="bg-red-600 text-white rounded px-4 py-2 border border-red-500 hover:bg-red-700 transition w-full"
+                className="bg-red-600 text-white rounded px-4 py-2 border border-red-500 hover:bg-red-700 transition w-full cursor-pointer"
             >
                 Çıkış Yap
             </button>

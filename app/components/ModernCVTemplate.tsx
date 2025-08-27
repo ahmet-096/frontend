@@ -71,11 +71,15 @@ const ModernCVTemplate = React.forwardRef<HTMLDivElement, { formData: FormData }
           <div className="font-bold text-xl mb-2 text-center min-h-[28px] break-words whitespace-pre-line">
             {formData.adSoyad}
           </div>
+          <hr className="w-full my-2 border-blue-200" />
           <div className="font-medium text-blue-700 mb-4 text-center min-h-[22px] break-words whitespace-pre-line">
             {formData.unvan}
           </div>
+          <hr className="w-full my-2 border-blue-200" />
           <div className="text-base mb-1 min-h-[20px] break-words whitespace-pre-line">{formData.telefon}</div>
+          <hr className="w-full my-2 border-blue-200" />
           <div className="text-base mb-1 min-h-[20px] break-words whitespace-pre-line">{formData.email}</div>
+          <hr className="w-full my-2 border-blue-200" />
           <div className="text-base mb-1 min-h-[20px] break-words whitespace-pre-line">{formData.adres}</div>
         </div>
         {/* Sağ panel */}

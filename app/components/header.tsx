@@ -5,16 +5,19 @@ import { useState, useEffect } from "react";
 
 export function Header() {
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [panelTipi, setPanelTipi] = useState<"isveren" | "aday" | undefined>(undefined);
+    const [panelTipi, setPanelTipi] = useState<"isveren" | "aday" | "admin" | undefined>(undefined);
     const [showKaydolAltMenu, setShowKaydolAltMenu] = useState(false);
+    const [isClient, setIsClient] = useState(false);
 
     // localStorage değiştiğinde menüyü güncelle
     useEffect(() => {
+        setIsClient(true);
         const checkRole = () => {
             const token = typeof window !== "undefined" ? localStorage.getItem("token") || localStorage.getItem("access_token") : null;
             const role = typeof window !== "undefined" ? localStorage.getItem("role") : null;
             if (token && role === "isveren") setPanelTipi("isveren");
             else if (token && role === "aday") setPanelTipi("aday");
+            else if (token && (role === "admin" || role === "Admin")) setPanelTipi("admin");
             else setPanelTipi(undefined);
         };
         checkRole();
@@ -26,7 +29,62 @@ export function Header() {
         document.body.style.overflow = mobileMenuOpen ? "hidden" : "unset";
     }, [mobileMenuOpen]);
 
-    // Menü içerikleri
+    // Admin menüleri
+    const adminDesktopMenu = (
+        <>
+            <Link href="/yoneticipanel" className="hover:text-blue-900 transition">Admin Paneli</Link>
+            <Link href="/admin/isverenler" className="hover:text-blue-900 transition">İşverenler</Link>
+            <Link href="/admin/adaylar" className="hover:text-blue-900 transition">Adaylar</Link>
+            <Link href="/admin/ilanlar" className="hover:text-blue-900 transition">Tüm İlanlar</Link>
+            <Link href="/admin/ayarlar" className="hover:text-blue-900 transition">Ayarlar</Link>
+            <Link href="/admin/loglar" className="hover:text-blue-900 transition">Loglar</Link>
+            <Link href="/admin/duyurular" className="hover:text-blue-900 transition">Duyurular</Link>
+            <Link href="/admin/istatistikler" className="hover:text-blue-900 transition">İstatistikler</Link>
+            <Link href="/admin/kullanicilar" className="hover:text-blue-900 transition">Kullanıcılar</Link>
+            <Link href="/admin/mesajlar" className="hover:text-blue-900 transition">Mesajlar</Link>
+            <button
+                onClick={() => {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("access_token");
+                    localStorage.removeItem("role");
+                    setPanelTipi(undefined);
+                    window.location.href = "/";
+                }}
+                className="bg-red-600 text-white rounded-full px-4 py-1 border border-red-500 hover:bg-red-700 transition cursor-pointer"
+            >
+                Çıkış Yap
+            </button>
+        </>
+    );
+
+    const adminMobileMenu = (
+        <>
+            <Link href="/yoneticipanel" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Admin Paneli</Link>
+            <Link href="/admin/isverenler" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İşverenler</Link>
+            <Link href="/admin/adaylar" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Adaylar</Link>
+            <Link href="/admin/ilanlar" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Tüm İlanlar</Link>
+            <Link href="/admin/ayarlar" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Ayarlar</Link>
+            <Link href="/admin/loglar" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Loglar</Link>
+            <Link href="/admin/duyurular" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Duyurular</Link>
+            <Link href="/admin/istatistikler" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İstatistikler</Link>
+            <Link href="/admin/kullanicilar" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Kullanıcılar</Link>
+            <Link href="/admin/mesajlar" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Mesajlar</Link>
+            <button
+                onClick={() => {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("access_token");
+                    localStorage.removeItem("role");
+                    setPanelTipi(undefined);
+                    window.location.href = "/";
+                }}
+                className="bg-red-600 text-white rounded px-4 py-2 border border-red-500 hover:bg-red-700 transition w-full cursor-pointer"
+            >
+                Çıkış Yap
+            </button>
+        </>
+    );
+
+    // Diğer menüler
     const isverenDesktopMenu = (
         <>
             <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
@@ -76,7 +134,7 @@ export function Header() {
         <div className="relative flex items-center gap-4">
             <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
             <Link href="/isilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
-            <Link href="/giris" className="rounded-full px-4 py-1 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition">CV Oluştur</Link>
+            <Link href="/giris" className="rounded-full px-4 py-1 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition cursor-pointer">Özgeçmiş Oluştur</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
             <div className="relative">
                 <button
@@ -105,7 +163,7 @@ export function Header() {
                 )}
             </div>
             <button
-                className="rounded-full px-4 py-1 border border-green-200 bg-green-600 text-white hover:bg-green-700 transition"
+                className="rounded-full px-4 py-1 border border-green-200 bg-green-600 text-white hover:bg-green-700 transition cursor-pointer"
                 onClick={() => window.location.href = "/giris"}
             >
                 Giriş Yap
@@ -120,8 +178,7 @@ export function Header() {
             <Link href="/isilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
             <Link href="/isverensayfa" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İlanlarım</Link>
             <Link href="/isverenprofil" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Profil</Link>
-           <Link href="/iletisim" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İletişim</Link>
-
+            <Link href="/iletisim" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İletişim</Link>
             <button
                 onClick={() => {
                     localStorage.removeItem("token");
@@ -164,7 +221,7 @@ export function Header() {
         <div className="flex flex-col w-full">
             <Link href="/" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Anasayfa</Link>
             <Link href="/isilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
-            <Link href="/giris" className="rounded px-4 py-2 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition w-full" onClick={() => setMobileMenuOpen(false)}>CV Oluştur</Link>
+            <Link href="/giris" className="rounded px-4 py-2 border border-blue-200 hover:bg-blue-50 hover:text-blue-900 transition w-full cursor-pointer" onClick={() => setMobileMenuOpen(false)}>Özgeçmiş Oluştur</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İletişim</Link>
             <div className="relative w-full">
                 <button
@@ -193,7 +250,7 @@ export function Header() {
                 )}
             </div>
             <button
-                className="rounded px-4 py-2 border border-green-200 bg-green-600 text-white hover:bg-green-700 transition w-full"
+                className="rounded px-4 py-2 border border-green-200 bg-green-600 text-white hover:bg-green-700 transition w-full cursor-pointer"
                 onClick={() => { window.location.href = "/giris"; setMobileMenuOpen(false); }}
             >
                 Giriş Yap
@@ -240,19 +297,27 @@ export function Header() {
                 </svg>
             </button>
             <nav className="hidden md:flex items-center gap-4 text-blue-700 relative font-medium">
-                {panelTipi === "isveren"
-                    ? isverenDesktopMenu
-                    : panelTipi === "aday"
-                        ? adayDesktopMenu
-                        : <div className="kaydol-alt-menu">{desktopMenuItems}</div>}
+                {isClient && (
+                    panelTipi === "isveren"
+                        ? isverenDesktopMenu
+                        : panelTipi === "aday"
+                            ? adayDesktopMenu
+                            : panelTipi === "admin"
+                                ? adminDesktopMenu
+                                : <div className="kaydol-alt-menu">{desktopMenuItems}</div>
+                )}
             </nav>
             {mobileMenuOpen && (
                 <nav className="absolute top-full left-0 w-full bg-white shadow-lg flex flex-col items-start gap-2 px-4 py-2 z-20 md:hidden">
-                    {panelTipi === "isveren"
-                        ? isverenMobileMenu
-                        : panelTipi === "aday"
-                            ? adayMobileMenu
-                            : <div className="kaydol-alt-menu w-full">{mobileMenuItems}</div>}
+                    {isClient && (
+                        panelTipi === "isveren"
+                            ? isverenMobileMenu
+                            : panelTipi === "aday"
+                                ? adayMobileMenu
+                                : panelTipi === "admin"
+                                    ? adminMobileMenu
+                                    : <div className="kaydol-alt-menu w-full">{mobileMenuItems}</div>
+                    )}
                 </nav>
             )}
         </header>

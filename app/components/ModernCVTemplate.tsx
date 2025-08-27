@@ -22,7 +22,7 @@ const ModernCVTemplate = React.forwardRef<HTMLDivElement, { formData: FormData }
      className="relative flex flex-col md:flex-row mx-auto shadow-lg bg-white rounded-lg overflow-hidden"
   style={{
     width: '700px',
-    minHeight: '1200px', // A4 için yaklaşık yükseklik
+    minHeight: '1200px', 
     wordBreak: 'break-word',
     minWidth: 0,
   }}

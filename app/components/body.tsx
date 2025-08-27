@@ -4,14 +4,17 @@ import { useState, useEffect } from "react";
 import { getJobPosts } from "../api/api";
 
 type Job = {
-    _id?: string;
+    id?: string;
     logo?: string;
-    baslik: string;
-    sehir: string;
-    ilce: string;
-    maas: string;
+    title: string;
+    location: string;
+    jobType?: string | number;
+    salary?: string;
 };
-
+const gotoIlanDetay = (ilan?: Job) => {
+    if (ilan) window.location.href = `/ilandetay/${ilan.id}`;
+    else window.location.href = "/isilanlari";
+};
 export default function Body() {
     const [jobs, setJobs] = useState<Job[]>([]);
 
@@ -53,13 +56,13 @@ export default function Body() {
             </section>
 
             {/* İş Arayan / İşveren */}
-            <section className="bg-blue-500 py-10 flex flex-col md:flex-row justify-center gap-10 text-white">
+            <section className="bg-green-500 py-10 flex flex-col md:flex-row justify-center gap-10 text-white">
                 <div className="text-center flex-1 px-4">
                     <h2 className="text-xl font-bold mb-2">İş Arıyorsan</h2>
                     <p className="mb-4">Zaman kaybetmeden iş bulmak için</p>
                     <a
                         href="/giris"
-                        className="bg-yellow-400 text-blue-700 font-bold rounded-full px-8 py-3 shadow hover:bg-yellow-500 hover:text-blue-900 transition inline-block"
+                        className="bg-blue-500 text-white font-bold rounded-full px-8 py-3 shadow   transition inline-block"
                     >
                         Özgeçmiş Oluştur
                     </a>
@@ -69,7 +72,7 @@ export default function Body() {
                     <p className="mb-4">Zaman kaybetmeden personel bulmak için</p>
                     <a
                         href="/giris"
-                        className="bg-yellow-400 text-blue-700 font-bold rounded-full px-8 py-3 shadow hover:bg-yellow-500 hover:text-blue-900 transition inline-block"
+                        className="bg-blue-500 text-white font-bold rounded-full px-8 py-3 shadow   transition inline-block"
                     >
                         İlan Ver
                     </a>
@@ -96,25 +99,26 @@ export default function Body() {
             {/* Vitrin İş İlanları */}
             <section className="py-10 px-4">
                 <h2 className="text-3xl font-bold mb-10 text-gray-800 text-center">Vitrin İş İlanları</h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8 justify-items-center">
-                    {jobs.map((job, idx) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 justify-items-center">
+                    {jobs.slice(0, 12).map((ilan, idx) => (
                         <div
-                            key={job._id || idx}
-                            className="bg-white rounded-2xl shadow-lg flex flex-col items-center p-6 hover:shadow-xl transition w-56 h-56 justify-between"
+                            key={ilan.id || idx}
+                            onClick={() => gotoIlanDetay(ilan)}
+                            className="bg-white rounded-3xl shadow-xl flex flex-col items-center p-8 hover:shadow-2xl transition w-72 h-72 justify-between cursor-pointer border-2 border-blue-100 hover:border-blue-400"
+                            style={{ textDecoration: "none" }}
                         >
-                            <div className="flex items-center justify-center h-20 mb-4">
+                            <div className="flex items-center justify-center h-24 mb-6">
                                 <Image
-                                    src={job.logo || "/images/logo.png"}
-                                    alt={job.baslik + " logo"}
-                                    width={120}
-                                    height={64}
-                                    className="object-contain h-16 max-w-[120px]"
+                                    src={ilan.logo || "/images/logo.png"}
+                                    alt={ilan.title + " logo"}
+                                    width={140}
+                                    height={72}
+                                    className="object-contain h-20 max-w-[140px]"
                                 />
                             </div>
-                            <div className="text-center">
-                                <div className="font-medium text-base text-gray-700 truncate w-44">{job.baslik}</div>
-                                <div className="text-sm text-gray-500 mt-2">{job.sehir} / {job.ilce}</div>
-                                <div className="text-sm text-gray-500 mt-2">Maaş: {job.maas}</div>
+                            <div className="text-center w-full">
+                                <div className="font-bold text-lg text-blue-800 truncate w-56 mb-2">{ilan.title}</div>
+                                <div className="text-base text-gray-600 mb-2">{ilan.location}</div>
                             </div>
                         </div>
                     ))}
@@ -122,7 +126,7 @@ export default function Body() {
                 <div className="flex justify-center mt-10">
                     <a
                         href="/isilanlari"
-                        className="bg-red-600 text-white rounded-full px-8 py-2 font-semibold shadow transition hover:bg-red-700"
+                        className="bg-blue-500 text-white font-bold rounded-full px-8 py-3 shadow   transition inline-block"
                     >
                         Tümünü Gör
                     </a>

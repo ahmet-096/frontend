@@ -274,7 +274,7 @@ useEffect(() => {
               )}
             </div>
             <button
-              className="bg-green-700 text-white rounded-lg py-2 font-bold mt-2 hover:bg-green-800 transition"
+              className="bg-blue-700 text-white rounded-lg py-2 font-bold mt-2 hover:bg-blue-800 transition cursor-pointer"
             >
               İş Ara
             </button>
@@ -328,7 +328,7 @@ useEffect(() => {
         )}
       </div>
       <button
-        className="bg-green-700 text-white rounded-lg py-2 px-6 font-bold mt-4 md:mt-0 hover:bg-green-800 transition"
+        className="bg-blue-700 text-white cursor-pointer rounded-lg py-2 px-6 font-bold mt-4 md:mt-0 hover:bg-blue-800 transition"
       >
         İşe Başvur
       </button>

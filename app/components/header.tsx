@@ -31,7 +31,7 @@ export function Header() {
         <>
             <Link href="/" className="hover:text-blue-900 transition">Anasayfa</Link>
             <Link href="/isilanlari" className="hover:text-blue-900 transition">İş İlanları</Link>
-            <Link href="/isverensayfa" className="hover:text-blue-900 transition">Panel</Link>
+            <Link href="/isverensayfa" className="hover:text-blue-900 transition">İlanlarım</Link>
             <Link href="/isverenprofil" className="hover:text-blue-900 transition">Profil</Link>
             <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
             <button
@@ -42,7 +42,7 @@ export function Header() {
                     setPanelTipi(undefined);
                     window.location.href = "/";
                 }}
-                className="bg-red-600 text-white rounded-full px-4 py-1 border border-red-500 hover:bg-red-700 transition"
+                className="bg-red-600 text-white rounded-full px-4 py-1 border border-red-500 hover:bg-red-700 transition cursor-pointer"
             >
                 Çıkış Yap
             </button>
@@ -118,7 +118,7 @@ export function Header() {
         <>
             <Link href="/" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Anasayfa</Link>
             <Link href="/isilanlari" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İş İlanları</Link>
-            <Link href="/isverensayfa" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Panel</Link>
+            <Link href="/isverensayfa" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İlanlarım</Link>
             <Link href="/isverenprofil" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>Profil</Link>
            <Link href="/iletisim" className="hover:text-blue-900 transition w-full py-2" onClick={() => setMobileMenuOpen(false)}>İletişim</Link>
 

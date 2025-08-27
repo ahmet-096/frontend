@@ -1,8 +1,6 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
-import { getEmployerJobs, addEmployerJob, deleteEmployerJob } from "../api/api";
-import beylikduzuMahalleleri from "./Words";
-import { getCurrentUser } from "../api/api";
+import React, { useState, useEffect } from "react";
+import { getEmployerJobs, deleteEmployerJob } from "../api/api";
 
 type Ilan = {
     id?: string;
@@ -10,17 +8,14 @@ type Ilan = {
     description: string;
     jobType: string;
     location: string;
+    createdAt?: string;
+    applicationCount?: number;
 };
-
-const jobTypes = ["FullTime", "PartTime", "Internship", "Remote"];
 
 function EmployerPage() {
     const [ilanlar, setIlanlar] = useState<Ilan[]>([]);
-    const [form, setForm] = useState<Ilan>({ title: "", description: "", jobType: "FullTime", location: "" });
-    const [showMahalle, setShowMahalle] = useState(false);
-    const mahalleRef = useRef<HTMLInputElement>(null);
 
-    useEffect(() => {
+    const refreshJobs = () => {
         const token = localStorage.getItem("token");
         if (!token) {
             window.location.href = "/giris";
@@ -37,56 +32,12 @@ function EmployerPage() {
             .then(data => {
                 if (Array.isArray(data)) setIlanlar(data);
             });
+    };
+
+    useEffect(() => {
+        refreshJobs();
     }, []);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
-        setForm({ ...form, [e.target.name]: e.target.value });
-
-    const handleMahalleSec = (Location: string) => {
-        setForm(prev => ({ ...prev, Location }));
-        setShowMahalle(false);
-        mahalleRef.current?.focus();
-    };
-
-    const ilanEkle = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const { title, description, jobType, location } = form;
-        if (!title || !description || !jobType || !location) return;
-        const token = localStorage.getItem("token");
-        if (!token) return (window.location.href = "/isverensayfa");
-        const jobTypeMap = { FullTime: 0, PartTime: 1, Internship: 2, Remote: 3 };
-
-        // Kullanıcı bilgilerini çek
-        const userRes = await getCurrentUser(token);
-        if (!userRes.ok) {
-            alert("Kullanıcı bilgileri alınamadı.");
-            return;
-        }
-        const user = await userRes.json();
-        const employerId = user.employerId; // PK olan id
-
-        // İlan ekle
-        const res = await addEmployerJob(token, {
-            EmployerId: employerId,
-            title: title,
-            description: description,
-            jobType: jobTypeMap[jobType as keyof typeof jobTypeMap],
-            location: location
-        });
-        if (!res.ok) {
-            const errorText = await res.text();
-            if (errorText.includes("Employer not found")) {
-                alert("İlan ekleyebilmek için önce işveren olarak onaylanmanız gerekmektedir.");
-            }
-            return;
-        }
-        setForm({ title: "", description: "", jobType: "FullTime", location: "" });
-        getEmployerJobs(token)
-            .then(res => res.json())
-            .then(data => {
-                if (Array.isArray(data)) setIlanlar(data);
-            });
-    };
     const ilanSil = async (id?: string) => {
         if (!id) return;
         const token = localStorage.getItem("token");
@@ -95,112 +46,126 @@ function EmployerPage() {
         if (res.ok) setIlanlar(prev => prev.filter(ilan => ilan.id !== id));
     };
 
+    const jobTypeToText = (type: string | number) => {
+        switch (type) {
+            case 0:
+            case "0":
+                return "Tam Zamanlı";
+            case 1:
+            case "1":
+                return "Yarı Zamanlı";
+            case 2:
+            case "2":
+                return "Dönemsel";
+            default:
+                return "Belirtilmedi";
+        }
+    };
+
     return (
-        <div className="min-h-screen bg-white flex flex-col">
-            <main className="flex flex-1 gap-12 px-12 py-8 justify-center items-start bg-white">
-                <section className="w-[400px] flex flex-col items-center">
-                    <div className="w-full bg-white rounded-xl p-8 shadow-lg border border-blue-100">
-                        <h2 className="text-xl font-bold mb-4 text-center text-blue-700">Yeni İlan Ekle</h2>
-                        <form onSubmit={ilanEkle} className="flex flex-col gap-4">
-                            <input
-                                type="text"
-                                name="title"
-                                placeholder="Başlık *"
-                                value={form.title}
-                                onChange={handleChange}
-                                className="bg-blue-50 rounded px-4 py-2 font-semibold border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                                required
-                                autoComplete="off"
-                            />
-                            <textarea
-                                name="description"
-                                placeholder="Açıklama *"
-                                value={form.description}
-                                onChange={handleChange}
-                                className="bg-blue-50 rounded px-4 py-2 font-semibold border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300 resize-none"
-                                required
-                                rows={3}
-                            />
-                            <select
-                                name="jobType"
-                                value={form.jobType}
-                                onChange={handleChange}
-                                className="bg-blue-50 rounded px-4 py-2 font-semibold border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                                required
-                            >
-                                {jobTypes.map(type => <option key={type} value={type}>{type}</option>)}
-                            </select>
-                            <div className="relative">
-                                <input
-                                    type="text"
-                                    name="location"
-                                    placeholder="Mahalle *"
-                                    value={form.location}
-                                    onChange={handleChange}
-                                    className="bg-blue-50 rounded px-4 py-2 font-semibold border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
-                                    required
-                                    autoComplete="off"
-                                    ref={mahalleRef}
-                                    onFocus={() => setShowMahalle(true)}
-                                    onBlur={() => setTimeout(() => setShowMahalle(false), 100)}
-                                />
-                                {showMahalle && (
-                                    <ul className="absolute left-0 top-full mt-1 w-full bg-white border border-gray-200 rounded shadow z-10 max-h-60 overflow-auto">
-                                        {beylikduzuMahalleleri
-                                            .filter(m => m.toLowerCase().includes(form.location.toLowerCase()))
-                                            .map(m => (
-                                                <li key={m} className="px-4 py-2 cursor-pointer hover:bg-blue-50" onMouseDown={() => handleMahalleSec(m)}>
-                                                    {m}
-                                                </li>
-                                            ))}
-                                    </ul>
-                                )}
-                            </div>
-                            <button type="submit" className="bg-blue-600 text-white rounded px-4 py-2 font-semibold mt-2 hover:bg-blue-700 transition">
-                                İlanı Ekle
-                            </button>
-                        </form>
-                    </div>
-                </section>
+        <div className="min-h-screen bg-gray-50 flex flex-col">
+            <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center px-4 sm:px-8 lg:px-12 py-6 sm:py-8 bg-white shadow">
+                <div>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-blue-700">İlanlarım</h2>
+                    <p className="text-gray-500 text-sm sm:text-base">Yalnızca sizin eklediğiniz ilanlar burada listelenir.</p>
+                </div>
+                <button
+                    className="mt-4 sm:mt-0 bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-lg font-bold shadow hover:bg-blue-700 transition w-full sm:w-auto cursor-pointer"
+                    onClick={() => window.location.href = "/ilanekle"}
+                >
+                    + Yeni İlan Ekle
+                </button>
+            </header>
+
+            <main className="flex flex-1 px-2 sm:px-4 lg:px-12 py-4 sm:py-8 justify-center items-start bg-gray-50">
                 <section className="flex-1">
-                    <div className="mb-6">
-                        <h2 className="text-2xl font-bold text-blue-700">İlanlarım</h2>
-                        <p className="text-gray-500">Yalnızca sizin eklediğiniz ilanlar burada listelenir.</p>
-                    </div>
-                    <div className="overflow-x-auto">
-                        <table className="min-w-full bg-white border border-blue-100 rounded-lg shadow">
-                            <thead>
-                                <tr>
-                                    <th className="px-4 py-2 text-left text-blue-700 font-bold">Başlık</th>
-                                    <th className="px-4 py-2 text-left text-blue-700 font-bold">Açıklama</th>
-                                    <th className="px-4 py-2 text-left text-blue-700 font-bold">Tür</th>
-                                    <th className="px-4 py-2 text-left text-blue-700 font-bold">Mahalle</th>
-                                    <th className="px-4 py-2"></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {ilanlar.length === 0 ? (
-                                    <tr key="no-ilan">
-                                        <td colSpan={5} className="text-gray-400 text-center py-8">Henüz ilanınız yok.</td>
+                    {ilanlar.length === 0 ? (
+                        <div className="text-gray-400 text-center py-8 sm:py-16 text-base sm:text-lg font-semibold">
+                            Henüz ilanınız yok.
+                        </div>
+                    ) : (
+                        <>
+                            {/* Masaüstü için tablo */}
+                            <table className="hidden sm:table w-full bg-white rounded-xl shadow border border-blue-100">
+                                <thead>
+                                    <tr className="bg-blue-100 text-blue-700">
+                                        <th className="p-2 text-left">Başlık</th>
+                                        <th className="p-2 text-left">Tür</th>
+                                        <th className="p-2 text-left">Mahalle</th>
+                                        <th className="p-2 text-left">Başvuru</th>
+                                        <th className="p-2 text-left">Tarih</th>
+                                        <th className="p-2 text-left">İşlem</th>
                                     </tr>
-                                ) : ilanlar.map(ilan => (
-                                    <tr key={ilan.id} className="border-t">
-                                        <td className="px-4 py-2">{ilan.title}</td>
-                                        <td className="px-4 py-2">{ilan.description}</td>
-                                        <td className="px-4 py-2">{ilan.jobType}</td>
-                                        <td className="px-4 py-2">{ilan.location}</td>
-                                        <td className="px-4 py-2">
-                                            <button className="bg-red-600 text-white px-4 py-2 rounded font-bold" onClick={() => ilanSil(ilan.id)}>Sil</button>
-                                        </td>
-                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {ilanlar.map(ilan => (
+                                        <tr key={ilan.id} className="border-t">
+                                            <td className="p-2 font-semibold text-blue-700">{ilan.title}</td>
+                                            <td className="p-2">{jobTypeToText(ilan.jobType)}</td>
+                                            <td className="p-2">{ilan.location}</td>
+                                            <td className="p-2">{ilan.applicationCount ?? 0}</td>
+                                            <td className="p-2">{ilan.createdAt ? new Date(ilan.createdAt).toLocaleDateString("tr-TR") : ""}</td>
+                                            <td className="p-2 flex gap-2">
+                                                <button
+                                                    className="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold hover:bg-blue-600 transition cursor-pointer"
+                                                    onClick={() => window.location.href = `/ilandetay/${ilan.id}`}
+                                                >
+                                                    Detay
+                                                </button>
+                                                <button
+                                                    className="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold hover:bg-yellow-600 transition cursor-pointer"
+                                                    onClick={() => alert("Güncelleme yeni sayfada yapılacak!")}
+                                                >
+                                                    Güncelle
+                                                </button>
+                                                <button
+                                                    className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold hover:bg-red-700 transition cursor-pointer"
+                                                    onClick={() => ilanSil(ilan.id)}
+                                                >
+                                                    Sil
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                            {/* Mobil için kartlar */}
+                            <div className="sm:hidden flex flex-col gap-4">
+                                {ilanlar.map(ilan => (
+                                    <div key={ilan.id} className="bg-white rounded-xl shadow border border-blue-100 p-4 flex flex-col gap-2">
+                                        <div className="font-bold text-blue-700 text-lg">{ilan.title}</div>
+                                        <div className="text-sm text-gray-600"><span className="font-semibold">Tür:</span> {jobTypeToText(ilan.jobType)}</div>
+                                        <div className="text-sm text-gray-600"><span className="font-semibold">Mahalle:</span> {ilan.location}</div>
+                                        <div className="text-sm text-gray-600"><span className="font-semibold">Başvuru:</span> {ilan.applicationCount ?? 0}</div>
+                                        <div className="text-sm text-gray-600"><span className="font-semibold">Tarih:</span> {ilan.createdAt ? new Date(ilan.createdAt).toLocaleDateString("tr-TR") : ""}</div>
+                                        <div className="flex gap-2 mt-2">
+                                            <button
+                                                className="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold hover:bg-blue-600 transition cursor-pointer flex-1"
+                                                onClick={() => window.location.href = `/ilandetay/${ilan.id}`}
+                                            >
+                                                Detay
+                                            </button>
+                                            <button
+                                                className="bg-green-500 text-white px-2 py-1 rounded text-xs font-bold hover:bg-yellow-600 transition cursor-pointer flex-1"
+                                                onClick={() => alert("Güncelleme yeni sayfada yapılacak!")}
+                                            >
+                                                Güncelle
+                                            </button>
+                                            <button
+                                                className="bg-red-600 text-white px-2 py-1 rounded text-xs font-bold hover:bg-red-700 transition cursor-pointer flex-1"
+                                                onClick={() => ilanSil(ilan.id)}
+                                            >
+                                                Sil
+                                            </button>
+                                        </div>
+                                    </div>
                                 ))}
-                            </tbody>
-                        </table>
-                    </div>
+                            </div>
+                        </>
+                    )}
                 </section>
             </main>
         </div>
     );
 }
 export default EmployerPage;
-

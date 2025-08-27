@@ -25,33 +25,25 @@ import InfoIcon from "@mui/icons-material/Info";
 import BusinessIcon from "@mui/icons-material/Business";
 import WorkIcon from "@mui/icons-material/Work";
 import HistoryIcon from "@mui/icons-material/History";
-
-const fetchEmployers = async () => [
-  { id: 1, name: "Firma A", email: "a@firma.com", phone: "555-111-2222" },
-  { id: 2, name: "Firma B", email: "b@firma.com", phone: "555-333-4444" },
-];
-const fetchJobPosts = async () => [
-  { id: 1, title: "Frontend Developer", employer: "Firma A", status: "Beklemede", desc: "React bilen frontend geliştirici arıyoruz." },
-  { id: 2, title: "Backend Developer", employer: "Firma B", status: "Beklemede", desc: "Node.js backend geliştirici arıyoruz." },
-];
-const fetchRecords = async () => [
-  { id: 1, action: "İlan Onaylandı", user: "Admin", date: "2025-08-22" },
-  { id: 2, action: "İşveren Silindi", user: "Admin", date: "2025-08-21" },
-];
+import { getEmployers,  approveJobPost, rejectJobPost } from "../api/api";
 
 interface Employer {
-  id: number;
-  name: string;
+  id: string;
+  companyName: string;
   email: string;
   phone: string;
+  website?: string;
+  companyDescription?: string;
+  logoUrl?: string;
 }
 
 interface JobPost {
-  id: number;
+  id: string;
   title: string;
   employer: string;
   status: string;
   desc: string;
+  verified?: boolean;
 }
 
 interface Record {
@@ -69,31 +61,73 @@ export default function AdminPanelPage() {
   const [selectedJob, setSelectedJob] = useState<JobPost | null>(null);
   const [selectedEmployer, setSelectedEmployer] = useState<Employer | null>(null);
 
+  // Token'ı oturumdan veya context'ten almalısın
+const token = typeof window !== "undefined" ? localStorage.getItem("token") ?? "" : "";
   useEffect(() => {
-    fetchEmployers().then(setEmployers);
-    fetchJobPosts().then(setJobPosts);
-    fetchRecords().then(setRecords);
+    // İşverenleri API'den çek
+    getEmployers(token)
+      .then(async (res) => {
+        if (res.ok) {
+          const data = await res.json();
+          setEmployers(data);
+        } else {
+          setEmployers([]);
+        }
+      })
+      .catch(() => setEmployers([]));
+
+    // İlanları API'den çek, en yeni ilanlar en üstte olacak şekilde sırala
+    fetch("http://localhost:5075/api/jobposts", {
+      headers: { Authorization: `Bearer ${token}` }
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          const data = await res.json();
+          setJobPosts([...data].reverse());
+        } else {
+          setJobPosts([]);
+        }
+      })
+      .catch(() => setJobPosts([]));
+
+    // Kayıtlar dummy, istersen API'den çekebilirsin
+    setRecords([
+      { id: 1, action: "İlan Onaylandı", user: "Admin", date: "2025-08-22" },
+      { id: 2, action: "İşveren Silindi", user: "Admin", date: "2025-08-21" },
+    ]);
   }, []);
 
-  const handleApprove = (id: number) => {
-    setJobPosts((prev) =>
-      prev.map((jp) => (jp.id === id ? { ...jp, status: "Onaylandı" } : jp))
-    );
-    setRecords((prev) => [
-      { id: prev.length + 1, action: "İlan Onaylandı", user: "Admin", date: new Date().toISOString().slice(0, 10) },
-      ...prev,
-    ]);
+  const handleApprove = async (id: number) => {
+    try {
+      await approveJobPost(id, token);
+      setJobPosts((prev) =>
+        prev.map((jp) => (jp.id === id.toString() ? { ...jp, status: "Onaylandı" } : jp))
+      );
+      setRecords((prev) => [
+        { id: prev.length + 1, action: "İlan Onaylandı", user: "Admin", date: new Date().toISOString().slice(0, 10) },
+        ...prev,
+      ]);
+    } catch (err) {
+      alert("Onaylama işlemi başarısız!");
+    }
   };
-  const handleReject = (id: number) => {
-    setJobPosts((prev) =>
-      prev.map((jp) => (jp.id === id ? { ...jp, status: "Reddedildi" } : jp))
-    );
-    setRecords((prev) => [
-      { id: prev.length + 1, action: "İlan Reddedildi", user: "Admin", date: new Date().toISOString().slice(0, 10) },
-      ...prev,
-    ]);
+
+  const handleReject = async (id: string) => {
+    try {
+      await rejectJobPost(Number(id), token);
+      setJobPosts((prev) =>
+        prev.map((jp) => (jp.id === id ? { ...jp, status: "Reddedildi" } : jp))
+      );
+      setRecords((prev) => [
+        { id: prev.length + 1, action: "İlan Reddedildi", user: "Admin", date: new Date().toISOString().slice(0, 10) },
+        ...prev,
+      ]);
+    } catch (err) {
+      alert("Reddetme işlemi başarısız!");
+    }
   };
-  const handleDeleteEmployer = (id: number) => {
+
+  const handleDeleteEmployer = (id: string) => {
     setEmployers((prev) => prev.filter((emp) => emp.id !== id));
     setRecords((prev) => [
       { id: prev.length + 1, action: "İşveren Silindi", user: "Admin", date: new Date().toISOString().slice(0, 10) },
@@ -107,6 +141,17 @@ export default function AdminPanelPage() {
         <Typography variant="h4" fontWeight={700} color="primary" gutterBottom>
           Yönetici Paneli
         </Typography>
+         <Button
+          variant="outlined"
+          color="error"
+          sx={{ float: "right", mb: 2 }}
+          onClick={() => {
+            localStorage.removeItem("token"); // veya sessionStorage.removeItem("token")
+            window.location.href = "/";
+          }}
+        >
+          Çıkış Yap
+        </Button>
         <Typography variant="subtitle1" color="text.secondary" gutterBottom>
           Tüm işverenleri, ilanları ve kayıtları tek ekrandan yönetin.
         </Typography>
@@ -136,15 +181,25 @@ export default function AdminPanelPage() {
                       <TableCell>Firma Adı</TableCell>
                       <TableCell>Email</TableCell>
                       <TableCell>Telefon</TableCell>
+                      <TableCell>Web Sitesi</TableCell>
+                      <TableCell>Açıklama</TableCell>
+                      <TableCell>Logo</TableCell>
                       <TableCell align="center">İşlem</TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {employers.map((emp) => (
                       <TableRow key={emp.id} hover>
-                        <TableCell>{emp.name}</TableCell>
+                        <TableCell>{emp.companyName}</TableCell>
                         <TableCell>{emp.email}</TableCell>
                         <TableCell>{emp.phone}</TableCell>
+                        <TableCell>{emp.website || "-"}</TableCell>
+                        <TableCell>{emp.companyDescription || "-"}</TableCell>
+                        <TableCell>
+                          {emp.logoUrl ? (
+                            <img src={emp.logoUrl} alt="logo" style={{ width: 40, height: 40, objectFit: "contain" }} />
+                          ) : "-"}
+                        </TableCell>
                         <TableCell align="center">
                           <IconButton color="info" onClick={() => setSelectedEmployer(emp)}>
                             <InfoIcon />
@@ -164,9 +219,16 @@ export default function AdminPanelPage() {
               <DialogContent>
                 {selectedEmployer && (
                   <Stack spacing={1}>
-                    <Typography><b>Firma:</b> {selectedEmployer.name}</Typography>
+                    <Typography><b>Firma:</b> {selectedEmployer.companyName}</Typography>
                     <Typography><b>Email:</b> {selectedEmployer.email}</Typography>
                     <Typography><b>Telefon:</b> {selectedEmployer.phone}</Typography>
+                    <Typography><b>Web Sitesi:</b> {selectedEmployer.website || "-"}</Typography>
+                    <Typography><b>Açıklama:</b> {selectedEmployer.companyDescription || "-"}</Typography>
+                    {selectedEmployer.logoUrl && (
+                      <Box sx={{ mt: 2 }}>
+                        <img src={selectedEmployer.logoUrl} alt="logo" style={{ width: 80, height: 80, objectFit: "contain" }} />
+                      </Box>
+                    )}
                   </Stack>
                 )}
               </DialogContent>
@@ -210,7 +272,7 @@ export default function AdminPanelPage() {
                           </IconButton>
                           {jp.status === "Beklemede" && (
                             <>
-                              <Button color="success" size="small" variant="contained" sx={{ mr: 1 }} onClick={() => handleApprove(jp.id)}>
+                              <Button color="success" size="small" variant="contained" sx={{ mr: 1 }} onClick={() => handleApprove(Number(jp.id))}>
                                 Onayla
                               </Button>
                               <Button color="error" size="small" variant="outlined" onClick={() => handleReject(jp.id)}>

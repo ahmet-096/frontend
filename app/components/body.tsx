@@ -79,28 +79,11 @@ export default function Body() {
                 </div>
             </section>
 
-            {/* İş Ortakları */}
-            <section className="py-10">
-                <h3 className="text-2xl font-bold text-center mb-8 text-blue-600">İş Ortaklarımız</h3>
-                <div className="flex justify-center gap-8 flex-wrap">
-                    {["logo", "logo", "logo", "logo", "logo", "logo"].map((img, i) => (
-                        <Image
-                            key={i}
-                            src={`/images/${img}.png`}
-                            alt={img}
-                            width={120}
-                            height={60}
-                            className="object-contain"
-                        />
-                    ))}
-                </div>
-            </section>
-
             {/* Vitrin İş İlanları */}
             <section className="py-10 px-4">
                 <h2 className="text-3xl font-bold mb-10 text-gray-800 text-center">Vitrin İş İlanları</h2>
                 <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 justify-items-center">
-                    {jobs.slice(0, 12).map((ilan, idx) => (
+                    {jobs.slice(0, 8).map((ilan, idx) => (
                         <div
                             key={ilan.id || idx}
                             onClick={() => gotoIlanDetay(ilan)}
@@ -132,6 +115,25 @@ export default function Body() {
                     </a>
                 </div>
             </section>
+
+            {/* İş Ortakları */}
+            <section className="py-10">
+                <h3 className="text-2xl font-bold text-center mb-8 text-blue-600">İş Ortaklarımız</h3>
+                <div className="flex justify-center gap-8 flex-wrap">
+                    {["logo", "logo", "logo", "logo", "logo", "logo"].map((img, i) => (
+                        <Image
+                            key={i}
+                            src={`/images/${img}.png`}
+                            alt={img}
+                            width={120}
+                            height={60}
+                            className="object-contain"
+                        />
+                    ))}
+                </div>
+            </section>
+
+
         </main>
     );
 }

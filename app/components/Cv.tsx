@@ -76,11 +76,11 @@ const Page = () => {
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <div className="w-full max-w-7xl mx-auto px-2 py-6 flex flex-col md:flex-row gap-8">
         {/* Sol Menü */}
-        <div className="w-[500px] bg-white rounded-lg shadow-md p-10 mb-6 md:mb-0 flex flex-col gap-6">
+        <div className="w-full md:w-[500px] bg-white rounded-lg shadow-md p-4 md:p-10 mb-6 md:mb-0 flex flex-col gap-6">
           <h1 className="text-2xl text-blue-700 font-bold mb-2">CV Oluştur</h1>
           <form>
             {/* Kişisel Bilgiler */}
-            <fieldset className="border border-gray-200 rounded-md p-4 mb-4">
+            <fieldset className="border border-gray-200 rounded-md p-2 md:p-4 mb-4">
               <legend className="font-semibold text-blue-700">Kişisel Bilgiler</legend>
               <input
                 type="text"
@@ -139,7 +139,7 @@ const Page = () => {
               />
             </fieldset>
             {/* Özgeçmiş Özeti */}
-            <fieldset className="border border-gray-200 rounded-md p-4 mb-4">
+            <fieldset className="border border-gray-200 rounded-md p-2 md:p-4 mb-4">
               <legend className="font-semibold text-blue-700">Özgeçmiş Özeti</legend>
               <textarea
                 placeholder="Özgeçmiş Özeti"
@@ -150,7 +150,7 @@ const Page = () => {
               />
             </fieldset>
             {/* Deneyim/Eğitim */}
-            <fieldset className="border border-gray-200 rounded-md p-4 mb-4">
+            <fieldset className="border border-gray-200 rounded-md p-2 md:p-4 mb-4">
               <legend className="font-semibold text-blue-700">Deneyim & Eğitim</legend>
               <textarea
                 placeholder="İş Deneyimleri"
@@ -168,7 +168,7 @@ const Page = () => {
               />
             </fieldset>
             {/* Beceriler & Diller */}
-            <fieldset className="border border-gray-200 rounded-md p-4 mb-4">
+            <fieldset className="border border-gray-200 rounded-md p-2 md:p-4 mb-4">
               <legend className="font-semibold text-blue-700">Beceriler & Diller</legend>
               <textarea
                 placeholder="Beceriler"
@@ -189,14 +189,14 @@ const Page = () => {
           <button
             type="button"
             onClick={handleSave}
-            className="mt-2 px-6 py-2 bg-blue-700 text-white rounded font-semibold shadow hover:bg-blue-800 transition cursor-pointer"
+            className="mt-2 px-6 py-2 bg-blue-700 text-white rounded font-semibold shadow hover:bg-blue-800 transition cursor-pointer w-full"
           >
             Kaydet
           </button>
           <button
             type="button"
             onClick={reactToPrintFn}
-            className="mt-2 px-6 py-2 bg-blue-700 text-white rounded font-semibold shadow hover:bg-blue-800 transition cursor-pointer"
+            className="mt-2 px-6 py-2 bg-blue-700 text-white rounded font-semibold shadow hover:bg-blue-800 transition cursor-pointer w-full"
           >
             PDF İndir
           </button>
@@ -208,6 +208,5 @@ const Page = () => {
       </div>
     </div>
   );
-};
-
+}
 export default Page;

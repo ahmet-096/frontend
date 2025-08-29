@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {deleteEmployerJob,  getJobPostsByEmployer } from "../api/api";
+import { deleteEmployerJob, getJobPostsByEmployer } from "../api/api";
 import { Token } from "@mui/icons-material";
 
 type Ilan = {
@@ -13,6 +13,13 @@ type Ilan = {
     applicationCount?: number;
 };
 
+function formatDate(dateStr?: string) {
+    if (!dateStr) return "";
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("tr-TR");
+}
+
 function EmployerPage() {
     const [ilanlar, setIlanlar] = useState<Ilan[]>([]);
 
@@ -22,9 +29,8 @@ function EmployerPage() {
             window.location.href = "/giris";
             return;
         }
-        // Retrieve employerId from localStorage or another source
         const employerId = localStorage.getItem("employerId");
-        if (!employerId) {
+        if (!employerId || employerId === "null" || employerId === "undefined") {
             window.location.href = "/giris";
             return;
         }
@@ -111,7 +117,7 @@ function EmployerPage() {
                                             <td className="p-2">{jobTypeToText(ilan.jobType)}</td>
                                             <td className="p-2">{ilan.location}</td>
                                             <td className="p-2">{ilan.applicationCount ?? 0}</td>
-                                            <td className="p-2">{ilan.createdAt ? new Date(ilan.createdAt).toLocaleDateString("tr-TR") : ""}</td>
+                                            <td className="p-2">{formatDate(ilan.createdAt)}</td>
                                             <td className="p-2 flex gap-2">
                                                 <button
                                                     className="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold hover:bg-blue-600 transition cursor-pointer"
@@ -144,7 +150,7 @@ function EmployerPage() {
                                         <div className="text-sm text-gray-600"><span className="font-semibold">Tür:</span> {jobTypeToText(ilan.jobType)}</div>
                                         <div className="text-sm text-gray-600"><span className="font-semibold">Mahalle:</span> {ilan.location}</div>
                                         <div className="text-sm text-gray-600"><span className="font-semibold">Başvuru:</span> {ilan.applicationCount ?? 0}</div>
-                                        <div className="text-sm text-gray-600"><span className="font-semibold">Tarih:</span> {ilan.createdAt ? new Date(ilan.createdAt).toLocaleDateString("tr-TR") : ""}</div>
+                                        <div className="text-sm text-gray-600"><span className="font-semibold">Tarih:</span> {formatDate(ilan.createdAt)}</div>
                                         <div className="flex gap-2 mt-2">
                                             <button
                                                 className="bg-blue-500 text-white px-2 py-1 rounded text-xs font-bold hover:bg-blue-600 transition cursor-pointer flex-1"

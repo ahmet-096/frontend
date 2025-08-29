@@ -8,7 +8,6 @@ import { getJobDetail } from "@/app/api/api";
 export default async function IlanDetayPage({ params }: { params: { id: string } }) {
   const response = await getJobDetail(params.id);
   const job = await response.json();
-  console.log(job);
 
   if (!job) {
     return (

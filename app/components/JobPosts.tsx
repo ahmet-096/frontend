@@ -1,10 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-
 import beylikduzuMahalleleri, { bilgisayarProgramlari, populerPozisyonlar, yabanciDiller } from "./Words";
-import {getJobPosts } from "../api/api";
-
-
+import { getJobPosts } from "../api/api";
 
 // İlan tipi tanımı
 interface Ilan {
@@ -17,45 +14,77 @@ interface Ilan {
   software?: string;
   createdAt?: string;
   salary?: string;
+  jobType?: string; // Çalışma şekli
 }
 
+const gotoIlanDetay = (ilan?: Ilan) => {
+  if (ilan) window.location.href = `/ilandetay/${ilan.id}`;
+  else window.location.href = "/isilanlari";
+};
+
+// Tarih formatlama fonksiyonu
+const formatDate = (dateStr?: string) => {
+  if (!dateStr) return "-";
+  const date = new Date(dateStr);
+  if (isNaN(date.getTime())) return dateStr;
+  return date.toLocaleDateString("tr-TR", {
+    year: "numeric",
+    month: "long",
+    day: "numeric"
+  });
+};
+
+// Çalışma şekli dönüştürücü
+const jobTypeToText = (type: string | number | undefined) => {
+  if (type === undefined || type === null) return "Belirtilmedi";
+  const numType = typeof type === "string" ? Number(type) : type;
+  switch (numType) {
+    case 0:
+      return "Tam Zamanlı";
+    case 1:
+      return "Yarı Zamanlı";
+    case 2:
+      return "Dönemsel";
+    default:
+      return "Belirtilmedi";
+  }
+};
 
 export default function IsIlanlari() {
   const [ilanlar, setIlanlar] = useState<Ilan[]>([]);
   const [loading, setLoading] = useState(true);
 
-useEffect(() => {
+  useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) {
-        window.location.href = "/giris";
-        setLoading(false);
-        return;
+      window.location.href = "/giris";
+      setLoading(false);
+      return;
     }
     getJobPosts()
-        .then(res => res.json())
-        .then(data => {
-            // Gelen veri
-            const mapped = Array.isArray(data)
-                ? data.map((item: Ilan) => ({
-                    id: item.id,
-                    title: item.title,
-                    companyName: item.companyName,
-                    city: item.city,
-                    location: item.location,
-                    language: item.language,
-                    software: item.software,
-                    createdAt: item.createdAt,
-                    salary: item.salary,
-                }))
-                : [];
-            setIlanlar(mapped);
-            setLoading(false);
-        })
-        .catch(() => {
-            setLoading(false);
-        });
-}, []);
-
+      .then(res => res.json())
+      .then(data => {
+        const mapped = Array.isArray(data)
+          ? data.map((item: Ilan) => ({
+            id: item.id,
+            title: item.title,
+            companyName: item.companyName,
+            city: item.city,
+            location: item.location,
+            language: item.language,
+            software: item.software,
+            createdAt: item.createdAt,
+            salary: item.salary,
+            jobType: item.jobType,
+          }))
+          : [];
+        setIlanlar(mapped);
+        setLoading(false);
+      })
+      .catch(() => {
+        setLoading(false);
+      });
+  }, []);
 
   const [filtre, setFiltre] = useState({
     pozisyon: "",
@@ -124,7 +153,7 @@ useEffect(() => {
   // Filtreleme
   const filtreliIlanlar = ilanlar.filter((ilan) => {
     return (
-     (filtre.pozisyon === "" ||
+      (filtre.pozisyon === "" ||
         ilan.title?.toLowerCase().includes(filtre.pozisyon.toLowerCase())) &&
       (filtre.firma === "" ||
         (ilan.companyName || "").toLowerCase().includes(filtre.firma.toLowerCase())) &&
@@ -150,7 +179,6 @@ useEffect(() => {
   };
 
   return (
-    
     <>
       <div className="flex flex-col md:flex-row gap-8 p-8 bg-white">
         {/* Filtre Alanı */}
@@ -305,35 +333,41 @@ useEffect(() => {
             {loading ? (
               <div>Yükleniyor...</div>
             ) : (
-             ilanlarToShow.map((ilan, i) => (
-    <div
-      key={ilan.id || i}
-      className="bg-white rounded-xl shadow border border-gray-100 p-6 flex flex-col md:flex-row md:items-center justify-between"
-    >
-      <div>
-        <h2 className="text-lg font-semibold text-gray-800">{ilan.title}</h2>
-        <div className="text-gray-600 mt-2">
-          <span className="mr-4 font-medium">{ilan.companyName}</span>
-          <span>
-            {ilan.city} {ilan.location && `/ ${ilan.location}`}
-          </span>
-        </div>
-        <div className="text-gray-400 mt-2 text-sm">
-          İlan Tarihi: {ilan.createdAt}
-        </div>
-        {ilan.salary && (
-          <div className="text-gray-400 mt-2 text-sm">
-            Maaş: {ilan.salary}
-          </div>
-        )}
-      </div>
-      <button
-        className="bg-blue-700 text-white cursor-pointer rounded-lg py-2 px-6 font-bold mt-4 md:mt-0 hover:bg-blue-800 transition"
-      >
-        İşe Başvur
-      </button>
-    </div>
-))
+              ilanlarToShow.map((ilan, i) => (
+                <div
+                  key={ilan.id || i}
+                  className="bg-white rounded-xl shadow border border-gray-100 p-6 flex flex-col md:flex-row md:items-center justify-between"
+                >
+                  <div>
+                    <h2 className="text-lg font-semibold text-gray-800">{ilan.title}</h2>
+                    <div className="text-gray-600 mt-2">
+                      <span className="mr-4 font-medium">{ilan.companyName}</span>
+                      <span>
+                        {ilan.city} {ilan.location && `/ ${ilan.location}`}
+                      </span>
+                    </div>
+                    <div className="text-gray-400 mt-2 text-sm">
+                      İlan Tarihi: {formatDate(ilan.createdAt)}
+                    </div>
+                    <div className="text-gray-400 mt-2 text-sm">
+                      Çalışma Şekli: {jobTypeToText(ilan.jobType)}
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-4 md:mt-0">
+                    <button
+                      className="bg-gray-200 text-blue-700 cursor-pointer rounded-lg py-2 px-6 font-bold hover:bg-blue-50 transition"
+                      onClick={() => gotoIlanDetay(ilan)}
+                    >
+                      Detay
+                    </button>
+                    <button
+                      className="bg-blue-700 text-white cursor-pointer rounded-lg py-2 px-6 font-bold hover:bg-blue-800 transition"
+                    >
+                      İşe Başvur
+                    </button>
+                  </div>
+                </div>
+              ))
             )}
           </div>
           {/* Sayfalama */}

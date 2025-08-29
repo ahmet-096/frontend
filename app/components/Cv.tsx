@@ -1,7 +1,9 @@
 'use client'
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { useReactToPrint } from 'react-to-print';
 import ModernCVTemplate from './ModernCVTemplate';
+import { getCandidate, updateCandidate } from '../api/api';
+
 type FormData = {
   adSoyad: string;
   unvan: string;
@@ -30,9 +32,45 @@ const Page = () => {
     diller: '',
     fotoUrl: '',
   });
+  const [candidateId, setCandidateId] = useState<string | null>(null);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const reactToPrintFn = useReactToPrint({ contentRef });
+
+  // Kullanıcıya ait candidateId'yi çek
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
+    if (token && userId) {
+      getCandidate(userId, token).then(async (res) => {
+        if (res.ok) {
+          const data = await res.json();
+          setCandidateId(data.id); // Candidate tablosundaki Id
+          // Eğer backend'den CV verisi geliyorsa, formu doldurabilirsin:
+          // setFormData({...formData, ...data});
+        }
+      });
+    }
+  }, []);
+
+  // CV'yi API'ye kaydet
+  const handleSave = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token || !candidateId) {
+        alert('Kullanıcı bilgisi bulunamadı!');
+        return;
+      }
+      const response = await updateCandidate(candidateId, token, formData);
+      if (response.ok) {
+        alert('CV başarıyla kaydedildi!');
+      } else {
+        alert('Kaydetme başarısız!');
+      }
+    } catch (err) {
+      alert('Bir hata oluştu!');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gray-100 flex flex-col">
@@ -150,7 +188,7 @@ const Page = () => {
           </form>
           <button
             type="button"
-            onClick={() => alert('CV başarıyla kaydedildi!')}//doldurulucak bura
+            onClick={handleSave}
             className="mt-2 px-6 py-2 bg-blue-700 text-white rounded font-semibold shadow hover:bg-blue-800 transition cursor-pointer"
           >
             Kaydet

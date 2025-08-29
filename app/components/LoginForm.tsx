@@ -44,19 +44,25 @@ const LoginForm: React.FC = () => {
         setLoading(false);
         return;
       }
-
       const data = await res.json();
-      console.log("API yanıtı:", data);
       setSuccess("Giriş başarılı!");
-      localStorage.setItem("token", data.access_token); // <-- DÜZELTİLDİ
-      localStorage.setItem("role", data.role === "Employer" ? "isveren" : data.role === "Candidate" ? "aday" : data.role);
+      localStorage.setItem("token", data.access_token);
+      localStorage.setItem("role", data.role);
+
+      // Eğer employerId veya candidateId dönüyorsa onları da kaydet
+      if (data.employerId && data.employerId !== null && data.employerId !== undefined) {
+        localStorage.setItem("employerId", data.employerId);
+      }
+      if (data.candidateId) {
+        localStorage.setItem("candidateId", data.candidateId);
+      }
 
       // Rol bilgisine göre yönlendirme
-      if (data.role === "Candidate") {
+      if (data.role?.toLowerCase() === "candidate") {
         router.push("/adaysayfa");
-      } else if (data.role === "Employer") {
+      } else if (data.role?.toLowerCase() === "employer") {
         router.push("/isverensayfa");
-      } else if (data.role === "Admin") {
+      } else if (data.role?.toLowerCase() === "admin") {
         router.push("/yoneticipanel");
       } else {
         router.push("/");

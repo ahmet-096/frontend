@@ -1,12 +1,10 @@
 import React, { useState } from "react";
 import Link from "next/link";
-import { registerEmployer } from "../api/api"; // API fonksiyonunu içe aktar
+import { registerEmployer } from "../api/api";
 
 const EmployerRegisterForm: React.FC = () => {
   const [form, setForm] = useState({
-    vergiNo: "",
-    unvan: "",
-    vergiDairesi: "",
+    companyName: "",
     email: "",
     password: "",
     passwordRepeat: "",
@@ -44,7 +42,7 @@ const EmployerRegisterForm: React.FC = () => {
       const res = await registerEmployer({
         Email: form.email,
         Password: form.password,
-        CompanyName: form.unvan,
+        CompanyName: form.companyName,
         Phone: form.phone,
       });
       if (!res.ok) {
@@ -55,9 +53,7 @@ const EmployerRegisterForm: React.FC = () => {
       }
       setSuccess("Kayıt başarılı!");
       setForm({
-        vergiNo: "",
-        unvan: "",
-        vergiDairesi: "",
+        companyName: "",
         email: "",
         password: "",
         passwordRepeat: "",
@@ -80,27 +76,9 @@ const EmployerRegisterForm: React.FC = () => {
         <div className="grid grid-cols-2 gap-6">
           <input
             type="text"
-            name="vergiNo"
-            placeholder="Vergi No *"
-            value={form.vergiNo}
-            onChange={handleChange}
-            className="bg-blue-50 rounded px-4 py-3 font-semibold border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-          <input
-            type="text"
-            name="unvan"
-            placeholder="İşveren Ünvanı *"
-            value={form.unvan}
-            onChange={handleChange}
-            className="bg-blue-50 rounded px-4 py-3 font-semibold border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
-            required
-          />
-          <input
-            type="text"
-            name="vergiDairesi"
-            placeholder="Vergi Dairesi *"
-            value={form.vergiDairesi}
+            name="companyName"
+            placeholder="Şirket Adı *"
+            value={form.companyName}
             onChange={handleChange}
             className="bg-blue-50 rounded px-4 py-3 font-semibold border border-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-300"
             required
@@ -181,3 +159,4 @@ const EmployerRegisterForm: React.FC = () => {
 };
 
 export default EmployerRegisterForm;
+// ...existing code...

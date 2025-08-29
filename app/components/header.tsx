@@ -15,9 +15,11 @@ export function Header() {
         const checkRole = () => {
             const token = typeof window !== "undefined" ? localStorage.getItem("token") || localStorage.getItem("access_token") : null;
             const role = typeof window !== "undefined" ? localStorage.getItem("role") : null;
-            if (token && role === "isveren") setPanelTipi("isveren");
-            else if (token && role === "aday") setPanelTipi("aday");
-            else if (token && (role === "admin" || role === "Admin")) setPanelTipi("admin");
+            const roleLower = role ? role.toLowerCase() : "";
+
+            if (token && (roleLower === "isveren" || roleLower === "employer")) setPanelTipi("isveren");
+            else if (token && (roleLower === "aday" || roleLower === "candidate")) setPanelTipi("aday");
+            else if (token && (roleLower === "admin")) setPanelTipi("admin");
             else setPanelTipi(undefined);
         };
         checkRole();
@@ -138,7 +140,7 @@ export function Header() {
             <Link href="/iletisim" className="hover:text-blue-900 transition">İletişim</Link>
             <div className="relative">
                 <button
-                    className="rounded-full px-4 py-1 border border-blue-200 bg-blue-600 text-white hover:bg-blue-700 transition"
+                    className="cursor-pointer rounded-full px-4 py-1 border border-blue-200 bg-blue-600 text-white hover:bg-blue-700 transition"
                     onClick={() => setShowKaydolAltMenu((v) => !v)}
                 >
                     Kaydol

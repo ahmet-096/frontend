@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { getEmployerJobs, deleteEmployerJob } from "../api/api";
+import {deleteEmployerJob,  getJobPostsByEmployer } from "../api/api";
+import { Token } from "@mui/icons-material";
 
 type Ilan = {
     id?: string;
@@ -21,7 +22,13 @@ function EmployerPage() {
             window.location.href = "/giris";
             return;
         }
-        getEmployerJobs(token)
+        // Retrieve employerId from localStorage or another source
+        const employerId = localStorage.getItem("employerId");
+        if (!employerId) {
+            window.location.href = "/giris";
+            return;
+        }
+        getJobPostsByEmployer(employerId, token)
             .then(res => {
                 if (res.status === 401 || res.status === 403) {
                     window.location.href = "/giris";
